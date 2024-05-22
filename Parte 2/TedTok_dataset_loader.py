@@ -4,7 +4,7 @@
 import sys
 import json
 import pyspark
-from pyspark.sql.functions import col, collect_list, array_join
+from pyspark.sql.functions import col, collect_list, array_join, struct
 
 from awsglue.transforms import *
 from awsglue.utils import getResolvedOptions
@@ -87,9 +87,16 @@ tedx_dataset_agg.printSchema()
 related_dataset_path = "s3://tedx-2024-data-mazzoleni-g/related_videos.csv"
 related_dataset = details_dataset = spark.read.option("header","true").csv(related_dataset_path)
 
+related_dataset_with_urls=related_dataset.join(tedx_dataset, related_dataset.internalId == tedx_dataset.id, "left") \
+    .select(related_dataset["id"], related_dataset["related_id"], related_dataset["title"], related_dataset["presenterDisplayName"], tedx_dataset["url"].alias("related_url"))
+
 #AGGREGATE WATCH NEXT DATA AND JOIN TO MAIN DATASET
-related_dataset_agg = related_dataset.groupBy(col("id").alias("id_ref")) \
-    .agg(collect_list("related_id").alias("related_video_ids"),collect_list("title").alias("related_video_title"),collect_list("presenterDisplayName").alias("presentedBy"))
+related_dataset_agg = related_dataset_with_urls.groupBy(col("id").alias("id_ref")) \
+    .agg(collect_list(struct(col("related_id").alias("related_video_ids"), col("title").alias("related_video_title"),
+     col("presenterDisplayName").alias("related_presentedBy"), col("related_url"))).alias("Related_videos"))
+        
+    
+
 
 related_dataset_agg.printSchema()
 
