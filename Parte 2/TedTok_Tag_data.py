@@ -1,7 +1,7 @@
 import sys
 import json
 import pyspark
-from pyspark.sql.functions import col, collect_list, array_join, struct
+from pyspark.sql.functions import col, collect_list, array_join, struct, array_distinct
 
 from awsglue.transforms import *
 from awsglue.utils import getResolvedOptions
@@ -37,7 +37,8 @@ tags_dataset_data= tags_dataset.join(tedx_dataset, tags_dataset.id == tedx_datas
     .select(tags_dataset["tag"], tedx_dataset["id"].alias("talk_id"),tedx_dataset["title"].alias("talk_title"),tedx_dataset["url"].alias("talk_url"))
 
 # CREATE THE AGGREGATE MODEL, ADD TAGS TO TEDX_DATASET
-tags_dataset_agg = tags_dataset_data.groupBy(col("tag").alias("_id")).agg(collect_list(struct(col("talk_id"),col("talk_title"),col("talk_url"))).alias("related_talks"))
+tags_dataset_agg = tags_dataset_data.groupBy(col("tag").alias("_id")) \
+    .agg(array_distinct(collect_list(struct(col("talk_id"), col("talk_title"), col("talk_url")))).alias("related_talks"))
 
 tags_dataset_agg.printSchema()
 
