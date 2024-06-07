@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const watch_next_schema = new mongoose.Schema({
-    title: String,
-    url: String,
-    description: String,
-    speakers: String
-}, { collection: 'TedTok_data' });
+const relatedVideoSchema = new Schema({
+  related_video_ids: { type: String, required: true },
+  related_video_title: { type: String, required: true },
+  related_presentedBy: { type: String, required: true },
+}, { collection: 'tedx_data' });
 
-module.exports = mongoose.model('watch_next', watch_next_schema);
+
+module.exports = mongoose.model('RelatedVideo', relatedVideoSchema);

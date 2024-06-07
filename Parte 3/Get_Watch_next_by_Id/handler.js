@@ -3,7 +3,7 @@ const connect_to_db = require('./db');
 
 // GET BY WATCH NEXT HANDLER
 
-const watch_next = require('./Watch_next');
+const watch_next = require('./watch_next');
 
 module.exports.get_by_watch_next = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;//no fz di callback
