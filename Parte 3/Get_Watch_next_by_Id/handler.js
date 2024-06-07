@@ -13,7 +13,7 @@ module.exports.get_by_watch_next = (event, context, callback) => {
         body = JSON.parse(event.body)//se non c'è corpo non ,lo estraggo
     }
     // set default
-    if (!body.tag) {
+    if (!body.id) {
         callback(null, {
             statusCode: 500,
             headers: { 'Content-Type': 'text/plain' },
@@ -30,13 +30,13 @@ module.exports.get_by_watch_next = (event, context, callback) => {
 
     connect_to_db().then(() => {
         console.log('=> get_all related talks');
-        watch_next.find({ tags: body.tag })
+        watch_next.findById(body.id)
             .skip((body.doc_per_page * body.page) - body.doc_per_page)
             .limit(body.doc_per_page)
             .then(talks => {
                 callback(null, {
                     statusCode: 200,
-                    body: JSON.stringify(talks)
+                    body: JSON.stringify(talks.Related_videos)
                 })
             }
             )
