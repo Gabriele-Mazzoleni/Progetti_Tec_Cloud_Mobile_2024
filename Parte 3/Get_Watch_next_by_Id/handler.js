@@ -17,7 +17,7 @@ module.exports.get_by_watch_next = (event, context, callback) => {
         callback(null, {
             statusCode: 500,
             headers: { 'Content-Type': 'text/plain' },
-            body: 'Could not fetch the talks. Tag is null.'
+            body: 'Could not fetch the related talks. Id is null.'
         })
     }
 
@@ -29,7 +29,7 @@ module.exports.get_by_watch_next = (event, context, callback) => {
     }
 
     connect_to_db().then(() => {
-        console.log('=> get_all talks');
+        console.log('=> get_all related talks');
         watch_next.find({ tags: body.tag })
             .skip((body.doc_per_page * body.page) - body.doc_per_page)
             .limit(body.doc_per_page)
@@ -44,7 +44,7 @@ module.exports.get_by_watch_next = (event, context, callback) => {
                 callback(null, {
                     statusCode: err.statusCode || 500,
                     headers: { 'Content-Type': 'text/plain' },
-                    body: 'Could not fetch the talks.'
+                    body: 'Could not fetch the related talks.'
                 })
             );
     });
