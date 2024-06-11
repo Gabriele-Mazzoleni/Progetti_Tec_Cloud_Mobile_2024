@@ -10,4 +10,4 @@ const watch_next_schema = new mongoose.Schema({
 
 }, { collection: 'MyTedx_data' });
 
-module.exports = mongoose.model('t', watch_next_schema);
+module.exports = mongoose.model('talk', watch_next_schema);
