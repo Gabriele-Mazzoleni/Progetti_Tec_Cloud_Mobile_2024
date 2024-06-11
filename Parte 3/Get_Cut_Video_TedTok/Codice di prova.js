@@ -4,6 +4,9 @@ const axios = require('axios');
 const s3 = new AWS.S3();
 const db = new AWS.DynamoDB.DocumentClient();
 
+
+//URI BUCKET S3 Cut_Video: s3://tedx-2024-data-mazzoleni-g/Cut_videos
+
 exports.handler = async (event) => {
     const videoId = event.pathParameters.id;
 
