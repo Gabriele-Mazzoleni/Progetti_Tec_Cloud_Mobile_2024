@@ -1,4 +1,4 @@
-
+// CONNECTION TO DB
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 let isConnected;

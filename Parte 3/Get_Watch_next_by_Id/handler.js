@@ -1,11 +1,11 @@
 
 const connect_to_db = require('./db');
 
-// GET BY WATCH NEXT HANDLER
+// GET BY TALK HANDLER
 
-const watch_next = require('./watch_next');
+const talk = require('./talk');
 
-module.exports.get_by_watch_next = (event, context, callback) => {
+module.exports.get_by_id = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;//no fz di callback
     console.log('Received event:', JSON.stringify(event, null, 2));
     let body = {}
@@ -17,7 +17,7 @@ module.exports.get_by_watch_next = (event, context, callback) => {
         callback(null, {
             statusCode: 500,
             headers: { 'Content-Type': 'text/plain' },
-            body: 'Could not fetch the related talks. Id is null.'
+            body: 'Could not fetch the talks. Tag is null.'
         })
     }
 
@@ -29,14 +29,45 @@ module.exports.get_by_watch_next = (event, context, callback) => {
     }
 
     connect_to_db().then(() => {
-        console.log('=> get_all related talks');
-        watch_next.findById(body.id)
-            .skip((body.doc_per_page * body.page) - body.doc_per_page)
-            .limit(body.doc_per_page)
+        console.log('=> get_all talks');
+        talk.find({ "_id": body.id })
+
+            /*
+             talk.find({ "Related_videos.related_video_ids": body.id }, { 
+       "Related_videos.related_video_ids": 1, 
+       "Related_videos.related_video_title": 1, 
+       "Related_videos.related_presentedBy": 1 
+     })*/
+
+
+
+            /*talk.aggregate([
+                    {
+                      $match: { Related_videos: { $elemMatch: { related_video_ids: body.id } } }
+                    },
+                    {
+                      $project: {
+                        Related_videos: {
+                          $filter: {
+                            input: "$Related_videos",
+                            as: "video",
+                            cond: { $eq: ["$$video.related_video_ids", body.id] }
+                          }
+                        }
+                      }
+                    }
+                  ])*///This will return an array of documents where each document has a Related_videos
+            //field that contains only the element that matches the condition,
+            //and includes all fields in that element.
+
+
             .then(talks => {
+                if (!talks) {
+                    throw new Error('Talk not found');
+                }
                 callback(null, {
                     statusCode: 200,
-                    body: JSON.stringify(talks.Related_videos)
+                    body: JSON.stringify(talks)
                 })
             }
             )
@@ -44,7 +75,7 @@ module.exports.get_by_watch_next = (event, context, callback) => {
                 callback(null, {
                     statusCode: err.statusCode || 500,
                     headers: { 'Content-Type': 'text/plain' },
-                    body: 'Could not fetch the related talks.'
+                    body: 'Could not fetch the talks.'
                 })
             );
     });
