@@ -1,6 +1,8 @@
 //importo librerie utili
-const AWS = require('aws-sdk');
-const axios = require('axios');
+const { PutObjectCommand, S3Client, HeadObjectCommand } = require("@aws-sdk/client-s3");
+//const axios = require('axios');
+const http = require('http'); // or 'https' for https:// URLs
+const fs = require('fs');
 const mongoose = require('mongoose');
 const connect_to_db = require('./db');
 const video = require('./video');
@@ -8,8 +10,7 @@ const video = require('./video');
 
 // Configura il client S3
 const S3_BUCKET_NAME = 's3://tedx-2024-data-mazzoleni-g/Cut_videos/';
-const s3 = new AWS.S3();
-
+const client = new S3Client({});
 
 module.exports.get_cut_video = async (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;//no fz di callback
@@ -53,7 +54,7 @@ module.exports.get_cut_video = async (event, context, callback) => {
         
         //controllo che la chiave non sia già nel bucket
         try {
-            await s3.headObject({ Bucket: S3_BUCKET_NAME, Key: s3Key }).promise();
+            await client.headObject({ Bucket: S3_BUCKET_NAME, Key: s3Key }).promise();
             return callback(null, {
                 statusCode: 200,
                 body: JSON.stringify(`Video già presente su S3 con chiave: ${s3Key}`)
@@ -65,15 +66,32 @@ module.exports.get_cut_video = async (event, context, callback) => {
             // Se l'oggetto non è trovato, continuiamo con il download e l'upload
         }
 
-        const response = await axios.get(videoUrl, { responseType: 'arraybuffer' });
+        //const response = await axios.get(videoUrl, { responseType: 'arraybuffer' });
+        
+        const file = fs.createWriteStream(s3Key);
+        const request = http.get(videoUrl, function(response) {
+            response.pipe(file);
 
-        const params = {
+            // after download completed close filestream
+            file.on("finish", () => {
+                file.close();
+                console.log("Download Completed");
+            });
+        });
+
+        const params = new PutObjectCommand({
             Bucket: S3_BUCKET_NAME,
             Key: s3Key,
-            Body: response.data
-        };
+            Body: file
+        });
 
-        await s3.putObject(params).promise();
+        try {
+            const res = await client.send(params);
+            console.log(res);
+          } catch (err) {
+            console.error(err);
+          }
+        
 
         return callback(null, {
             statusCode: 200,
