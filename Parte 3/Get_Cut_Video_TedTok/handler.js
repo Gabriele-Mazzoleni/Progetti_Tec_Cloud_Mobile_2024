@@ -1,6 +1,5 @@
 //importo librerie utili
 const { PutObjectCommand, S3Client, HeadObjectCommand } = require("@aws-sdk/client-s3");
-//const axios = require('axios');
 const http = require('http'); // or 'https' for https:// URLs
 const fs = require('fs');
 const mongoose = require('mongoose');
@@ -54,7 +53,7 @@ module.exports.get_cut_video = async (event, context, callback) => {
         
         //controllo che la chiave non sia già nel bucket
         try {
-            await client.headObject({ Bucket: S3_BUCKET_NAME, Key: s3Key }).promise();
+            await client.head_object( Bucket = S3_BUCKET_NAME, Key = s3Key ).promise(); //da verificare se funziona
             return callback(null, {
                 statusCode: 200,
                 body: JSON.stringify(`Video già presente su S3 con chiave: ${s3Key}`)
@@ -66,7 +65,6 @@ module.exports.get_cut_video = async (event, context, callback) => {
             // Se l'oggetto non è trovato, continuiamo con il download e l'upload
         }
 
-        //const response = await axios.get(videoUrl, { responseType: 'arraybuffer' });
         
         const file = fs.createWriteStream(s3Key);
         const request = http.get(videoUrl, function(response) {
