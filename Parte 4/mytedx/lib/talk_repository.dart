@@ -21,7 +21,7 @@ Future<List<Talk>> getTalksByTag(String tag, int page) async {
     body: jsonEncode(<String, Object>{
       'tag': tag,
       'page': page,
-      'doc_per_page': 6
+      'doc_per_page': 5
     }),
   );
   if (response.statusCode == 200) {
@@ -34,6 +34,14 @@ Future<List<Talk>> getTalksByTag(String tag, int page) async {
       
 } 
 
+Future<List<RelatedTalk>> initEmptyRelList() async {
+
+  Iterable list = json.decode("[]");
+  var relTalks = list.map((model) => RelatedTalk.fromJSON(model)).toList();
+  return relTalks;
+
+}
+
 Future<List<RelatedTalk>> getWatchNextByIDx(String id, int page) async {
   var url = Uri.parse('https://aoypr8ws59.execute-api.us-east-1.amazonaws.com/default/Get_Watch_Next_by_Idx');
 
@@ -44,7 +52,7 @@ Future<List<RelatedTalk>> getWatchNextByIDx(String id, int page) async {
     body: jsonEncode(<String, Object>{
       'id': id,
       'page': page,
-      'doc_per_page': 6
+      'doc_per_page': 5
     }),
   );
   if (response.statusCode == 200) {
