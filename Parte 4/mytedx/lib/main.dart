@@ -207,11 +207,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 child: ListTile(
-                                    subtitle:
+                                    subtitle: Column(
+                                      children: [
                                         Text(snapshot.data![index].mainSpeaker),
+                                        Text(snapshot.data![index].id)
+                                        ]
+                                      ),
+                                        
                                     title: Text(snapshot.data![index].title)),
-                                onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(snapshot.data![index].details))),
+                                    
                               );
                             },
                           ),
@@ -225,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onPressed: () {
                                 if (snapshot.data!.length >= 5) {
                                  page = page + 1;
-                                 _getTalksByTag();
+                                 _getRelatedByID();
                                 }
                               },),
                               FloatingActionButton(
@@ -233,7 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onPressed: () {
                                 if (page > 1) {
                                  page = page - 1;
-                                 _getTalksByTag();
+                                 _getRelatedByID();
                                 }
                               },),
                             ]
@@ -250,7 +254,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     setState(() {
                                       init = true;
                                       page = 1;
-                                      _controllerA.text = "";
+                                      _controllerB.text = "";
                                     });
                                   },
                                 )
