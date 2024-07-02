@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('My TEDx App'),
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.blue,
         ),
         body: Container(
           alignment: Alignment.center,
@@ -193,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
        }
 
-   Widget _buildRelatedTalks(){ 
+   Widget _buildRelatedTalks(){ //ID PER PROVA 526880
             return FutureBuilder<List<RelatedTalk>>(
                   future: _relTalks,
                   builder: (context, snapshot) {
@@ -206,18 +206,19 @@ class _MyHomePageState extends State<MyHomePage> {
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
                               return GestureDetector(
-                                child: ListTile(
+                                    child: ListTile(
                                     subtitle: Column(
-                                      children: [
-                                        Text(snapshot.data![index].mainSpeaker),
-                                        Text(snapshot.data![index].id)
-                                        ]
-                                      ),
-                                        
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start, // align to the left
+                                  children: [
+                                    Text('ID: ${snapshot.data![index].id}'),
+                                    Text('Presenter: ${snapshot.data![index].mainSpeaker}'),
+                                  ],
+                                ),
                                     title: Text(snapshot.data![index].title)),
                                     
                               );
-                            },
+                            },// itemBuilder
                           ),
                           floatingActionButtonLocation:
                               FloatingActionButtonLocation.centerDocked,
