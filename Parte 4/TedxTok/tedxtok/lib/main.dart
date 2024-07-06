@@ -1,8 +1,10 @@
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:tedxtok/Models/topicItem.dart';
 import 'package:tedxtok/Styles/TedTokColors.dart';
 import 'package:tedxtok/Styles/fontStyles.dart';
 import 'package:tedxtok/Styles/sizes.dart';
+import 'package:video_player/video_player.dart';
 
 void main() {
   runApp(MyApp());
