@@ -73,8 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(sizes.stdRoundedCorner),
                 bottomRight: Radius.circular(sizes.stdRoundedCorner),
-                ),
               ),
+            ),
             padding: const EdgeInsets.symmetric(vertical: 20),
             alignment: Alignment.center,
             child: Row(
@@ -88,16 +88,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: fontStyles.headerText,
                       textAlign: TextAlign.right,
                     ),
-                    Text('TO',
+                    Text(
+                      'TO',
                       style: fontStyles.headerText,
                       textAlign: TextAlign.right,
                     ),
                   ],
                 ),
                 Image.asset(
-                      'assets/images/Logo_Bianco.png', // Path to the image asset
-                      height: sizes.imgSize, 
-                    ),
+                  'assets/images/Logo_Bianco.png', // Path to the image asset
+                  height: sizes.imgSize,
+                ),
               ],
             ),
           ),
@@ -153,7 +154,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: EdgeInsets.symmetric(vertical: 15),
               ),
               onPressed: () {
-                // Funzione di OnPressed, la aggiungeremo più tardi
+                // Raccogli i tag selezionati
+                List<String> selectedTopics = [];
+                for (int i = 0; i < topics.length; i++) {
+                  if (checkedTopics[i]) {
+                    selectedTopics.add(topics[i]);
+                  }
+                }
+                // Naviga alla seconda pagina
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        SecondPage(selectedTags: selectedTopics),
+                  ),
+                );
               },
               child: const Center(
                 child: Text(
@@ -190,7 +205,8 @@ class _SecondPageState extends State<SecondPage> {
   }
 
   void _initializeVideoPlayer() async {
-    _videoPlayerController = VideoPlayerController.asset('assets/video.mp4');
+    _videoPlayerController =
+        VideoPlayerController.asset('assets/videos/video.mp4');
     await _videoPlayerController.initialize();
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
@@ -204,7 +220,8 @@ class _SecondPageState extends State<SecondPage> {
     );
     setState(() {});
   }
-@override
+
+  @override
   void dispose() {
     _videoPlayerController.dispose();
     _chewieController.dispose();
@@ -271,4 +288,3 @@ class _SecondPageState extends State<SecondPage> {
     }
   }
 }
-
