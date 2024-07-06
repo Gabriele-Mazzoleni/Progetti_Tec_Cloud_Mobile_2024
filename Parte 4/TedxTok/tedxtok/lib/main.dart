@@ -168,4 +168,105 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+class SecondPage extends StatefulWidget {
+  final List<String> selectedTags;
+
+  SecondPage({required this.selectedTags});
+
+  @override
+  _SecondPageState createState() => _SecondPageState();
+}
+
+class _SecondPageState extends State<SecondPage> {
+  late VideoPlayerController _videoPlayerController;
+  late ChewieController _chewieController;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeVideoPlayer();
+  }
+
+  void _initializeVideoPlayer() async {
+    _videoPlayerController = VideoPlayerController.asset('assets/video.mp4');
+    await _videoPlayerController.initialize();
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      autoPlay: true,
+      looping: true,
+      allowPlaybackSpeedChanging: true,
+      allowFullScreen: true,
+      placeholder: Container(
+        color: Colors.black,
+      ),
+    );
+    setState(() {});
+  }
+@override
+  void dispose() {
+    _videoPlayerController.dispose();
+    _chewieController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_videoPlayerController.value.isInitialized) {
+      return Scaffold(
+        body: Column(
+          children: [
+            Container(
+              color: Colors.red,
+              padding: EdgeInsets.all(8.0),
+              width: double.infinity,
+              child: Center(
+                child: Text(
+                  'TedxTok',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.8,
+              child: AspectRatio(
+                aspectRatio: _videoPlayerController.value.aspectRatio,
+                child: Chewie(
+                  controller: _chewieController,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                color: Colors.blue,
+                width: double.infinity,
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'This is a sample video description. You can add your own video description here',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('TedxTok'),
+        ),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+  }
+}
 
