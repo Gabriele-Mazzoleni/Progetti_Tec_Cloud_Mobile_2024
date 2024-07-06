@@ -1,4 +1,8 @@
+
 import 'package:flutter/material.dart';
+
+import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
 void main() {
   runApp(MyApp());
@@ -8,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'TedxTok',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -23,74 +27,273 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _isChecked1 = false;
-  bool _isChecked2 = false;
-  bool _isChecked3 = false;
+  List<bool> _isChecked = [];
+  List<String> _tags = [
+    'Immigration',
+    'TED Connects',
+    'Decision-making',
+    'Marketing',
+    'Planets',
+    'Beauty',
+    'Photography',
+    'AI',
+    'Motivation',
+    'Painting',
+    'Egypt',
+    'Crime',
+    'Design',
+    'Discovery',
+    'Exercise',
+    'Medical research',
+    'Sleep',
+    'Evolution',
+    'Leadership',
+    'Gaming',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _isChecked = List.filled(_tags.length, false);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Titolo'),
+        title: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Text(
+            'Welcome to TedxTok',
+            style: TextStyle(color: Colors.white, fontSize: 20.0),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                Row(
-                  children: [
-                    Checkbox(
-                      value: _isChecked1,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _isChecked1 = value ?? false;
-                        });
-                      },
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10.0,
                     ),
-                    Text('Checkbox 1'),
                   ],
                 ),
-                Row(
+                child: Column(
                   children: [
-                    Checkbox(
-                      value: _isChecked2,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _isChecked2 = value ?? false;
-                        });
-                      },
+                    Text(
+                      'Please select a list of topics that might interest you:',
+                      style: TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
-                    Text('Checkbox 2'),
+                    SizedBox(height: 10.0), // Spazio tra il testo e i checkbox
+                    Column(
+                      children: _tags.map((tag) {
+                        int index = _tags.indexOf(tag);
+                        return CheckboxRow(
+                          index: index,
+                          isChecked: _isChecked[index],
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isChecked[index] = value ?? false;
+                            });
+                          },
+                          tag: tag,
+                        );
+                      }).toList(),
+                    ),
                   ],
                 ),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: _isChecked3,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _isChecked3 = value ?? false;
-                        });
-                      },
+              ),
+              SizedBox(height: 20.0), // Margine sopra al bottone
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Get the selected tags
+                    List<String> selectedTags = [];
+                    for (int i = 0; i < _isChecked.length; i++) {
+                      if (_isChecked[i]) {
+                        selectedTags.add(_tags[i]);
+                      }
+                    }
+
+                    // Navigate to the next page with selected tags
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            SecondPage(selectedTags: selectedTags),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Colors.lightBlue, // Colore del bottone azzurro
+                    foregroundColor: Colors.white, // Colore del testo bianco
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(10.0), // Bordi arrotondati
                     ),
-                    Text('Checkbox 3'),
-                  ],
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 50,
+                        vertical: 20), // Aumenta l'area di click
+                  ),
+                  child: Text("LET'S BEGIN"),
                 ),
-              ],
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Aggiungi qui l'azione del bottone
-                print('Bottone premuto');
-              },
-              child: Text('Premi'),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+class CheckboxRow extends StatelessWidget {
+  final int index;
+  final bool isChecked;
+  final ValueChanged<bool?> onChanged;
+  final String tag;
+
+  CheckboxRow({
+    required this.index,
+    required this.isChecked,
+    required this.onChanged,
+    required this.tag,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start, // Align to the left
+      children: [
+        Checkbox(
+          value: isChecked,
+          onChanged: onChanged,
+        ),
+        Text(tag),
+      ],
+    );
+  }
+}
+class SecondPage extends StatefulWidget {
+  final List<String> selectedTags;
+
+  SecondPage({required this.selectedTags});
+
+  @override
+  _SecondPageState createState() => _SecondPageState();
+}
+
+class _SecondPageState extends State<SecondPage> {
+  late VideoPlayerController _videoPlayerController;
+  late ChewieController _chewieController;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeVideoPlayer();
+  }
+
+  void _initializeVideoPlayer() async {
+    _videoPlayerController = VideoPlayerController.asset('assets/video.mp4');
+    await _videoPlayerController.initialize();
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      autoPlay: true,
+      looping: true,
+      allowPlaybackSpeedChanging: true,
+      allowFullScreen: true,
+      placeholder: Container(
+        color: Colors.black,
+      ),
+    );
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    _chewieController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_videoPlayerController.value.isInitialized) {
+      return Scaffold(
+        body: Column(
+          children: [
+            Container(
+              color: Colors.red,
+              padding: EdgeInsets.all(8.0),
+              width: double.infinity,
+              child: Center(
+                child: Text(
+                  'TedxTok',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.8,
+              child: AspectRatio(
+                aspectRatio: _videoPlayerController.value.aspectRatio,
+                child: Chewie(
+                  controller: _chewieController,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                color: Colors.blue,
+                width: double.infinity,
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'This is a sample video description. You can add your own video description here',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('TedxTok'),
+        ),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+  }
+}
+
+
