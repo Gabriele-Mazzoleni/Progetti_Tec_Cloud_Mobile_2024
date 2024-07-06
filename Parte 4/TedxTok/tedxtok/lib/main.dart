@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
@@ -209,23 +207,32 @@ class _SecondPageState extends State<SecondPage> {
   @override
   void initState() {
     super.initState();
-    _initializeVideoPlayer();
+    _initVideoPlayer();
   }
 
-  void _initializeVideoPlayer() async {
-    _videoPlayerController = VideoPlayerController.asset('assets/video.mp4');
-    await _videoPlayerController.initialize();
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      autoPlay: true,
-      looping: true,
-      allowPlaybackSpeedChanging: true,
-      allowFullScreen: true,
-      placeholder: Container(
-        color: Colors.black,
-      ),
-    );
-    setState(() {});
+  void _initVideoPlayer() async {
+    try {
+      _videoPlayerController = VideoPlayerController.networkUrl(
+        Uri.parse(
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        ),
+      );
+      await _videoPlayerController.initialize().then((_) {
+        _chewieController = ChewieController(
+          videoPlayerController: _videoPlayerController,
+          autoPlay: true,
+          looping: true,
+          allowPlaybackSpeedChanging: true,
+          allowFullScreen: true,
+          placeholder: Container(
+            color: Colors.black,
+          ),
+        );
+        setState(() {});
+      });
+    } catch (e) {
+      print('Error initializing video player: $e');
+    }
   }
 
   @override
@@ -235,7 +242,7 @@ class _SecondPageState extends State<SecondPage> {
     super.dispose();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     if (_videoPlayerController.value.isInitialized) {
       return Scaffold(
@@ -295,5 +302,3 @@ class _SecondPageState extends State<SecondPage> {
     }
   }
 }
-
-
