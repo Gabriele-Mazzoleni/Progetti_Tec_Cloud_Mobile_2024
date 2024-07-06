@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:tedxtok/Models/topicItem.dart';
@@ -232,26 +234,51 @@ class _SecondPageState extends State<SecondPage> {
   Widget build(BuildContext context) {
     if (_videoPlayerController.value.isInitialized) {
       return Scaffold(
+        backgroundColor: Colors.black,
         body: Column(
           children: [
-            Container(
-              color: Colors.red,
-              padding: EdgeInsets.all(8.0),
-              width: double.infinity,
-              child: Center(
-                child: Text(
-                  'TedxTok',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                  ),
-                  textAlign: TextAlign.center,
+            //header
+            Container( 
+              decoration: const BoxDecoration(
+                color: tedTokColors.tedRed, // Rosso TedTok
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(sizes.stdRoundedCorner),
+                  bottomRight: Radius.circular(sizes.stdRoundedCorner),
                 ),
+              ),
+              padding: EdgeInsets.all(20.0),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      //icon: Icon(Icons.add_box_outlined, color: Colors.whitesize: sizes.iconSize,), 
+                      icon: Icon(Icons.arrow_back_rounded, color: Colors.white, size: sizes.iconSize,), 
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Image.asset(
+                        'assets/images/Logo_Bianco.png', // Path to the image asset
+                        height: sizes.imgSize,
+                      ),
+                    ),
+                  ),
+                  const Align(
+                    alignment: Alignment.centerRight,
+                    child: Icon(Icons.send_rounded, color: Colors.white, size:sizes.iconSize),
+                  ),
+                ],
               ),
             ),
             Container(
               width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.8,
+              height: MediaQuery.of(context).size.height * 0.7,
               child: AspectRatio(
                 aspectRatio: _videoPlayerController.value.aspectRatio,
                 child: Chewie(
@@ -259,17 +286,30 @@ class _SecondPageState extends State<SecondPage> {
                 ),
               ),
             ),
+            
             Expanded(
               child: Container(
-                color: Colors.blue,
+                decoration: const BoxDecoration(
+                color: tedTokColors.tokBlue, // Rosso TedTok
+                borderRadius: BorderRadius.only(
+                   topLeft: Radius.circular(sizes.stdRoundedCorner),
+                   topRight: Radius.circular(sizes.stdRoundedCorner),
+                  ),
+                ),
                 width: double.infinity,
                 padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'This is a sample video description. You can add your own video description here',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.white,
-                  ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Sample video title',
+                      style: fontStyles.TalkTitle,
+                    ),
+                    Text(
+                      'Sample video description',
+                      style:fontStyles.TalkSubitle,
+                    ),
+                  ], 
                 ),
               ),
             ),
@@ -279,7 +319,10 @@ class _SecondPageState extends State<SecondPage> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: Text('TedxTok'),
+          title: Image.asset(
+                  'assets/images/Logo_Bianco.png', // Path to the image asset
+                  height: sizes.imgSize*2,
+                ),
         ),
         body: Center(
           child: CircularProgressIndicator(),
