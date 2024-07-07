@@ -63,7 +63,9 @@ class _SecondPageState extends State<SecondPage> {
   }
 
   void _launchUrl(String url) async {
+    // ignore: deprecated_member_use
     if (await canLaunch(url)) {
+      // ignore: deprecated_member_use
       await launch(url);
     } else {
       throw 'Could not launch $url';
@@ -139,13 +141,20 @@ class _SecondPageState extends State<SecondPage> {
                     Container(
                       width: double.infinity,
                       height: MediaQuery.of(context).size.height * 0.65,
-                      child: AspectRatio(
+                        child: Center(
+                          child: Text(
+                            'Video Player Placeholder',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      /*child: AspectRatio(
                         aspectRatio: _videoPlayerController.value.aspectRatio,
                         child: Chewie(
                           controller: _chewieController,
                         ),
-                      ),
+                      ),*/
                     ),
+                    
                     Expanded(
                       child: Container(
                         decoration: const BoxDecoration(
@@ -168,10 +177,16 @@ class _SecondPageState extends State<SecondPage> {
                               talk.mainSpeaker,
                               style: fontStyles.TalkSubitle,
                             ),
-                            ElevatedButton(
+                            Text(
+                              talk.mainSpeaker,
+                              style: fontStyles.TalkSubitle),
+                            Text(
+                              talk.duration,
+                              style: fontStyles.TalkSubitle),
+                            /*ElevatedButton(
                               onPressed: () => _launchUrl(talk.url),
                               child: Text('Visit TED.com'),
-                            ),
+                            ),*/
                           ],
                         ),
                       ),
