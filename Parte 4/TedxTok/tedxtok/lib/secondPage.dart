@@ -1,4 +1,4 @@
-import 'package:chewie/chewie.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tedxtok/Functions/talk_list.dart';
 import 'package:tedxtok/Models/Talk.dart';
@@ -6,6 +6,8 @@ import 'package:tedxtok/Styles/TedTokColors.dart';
 import 'package:tedxtok/Styles/fontStyles.dart';
 import 'package:tedxtok/Styles/sizes.dart';
 import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SecondPage extends StatefulWidget {
   final List<String> selectedTags;
@@ -17,33 +19,41 @@ class SecondPage extends StatefulWidget {
 }
 
 class _SecondPageState extends State<SecondPage> {
-  late Future<List<Talk>> _talks;
+  //late Future<List<Talk>> _talks;
   late VideoPlayerController _videoPlayerController;
   late ChewieController _chewieController;
 
   @override
   void initState() {
     super.initState();
-    _initializeVideoPlayer();
-    _talks= getTalkstByTagList(widget.selectedTags);
+    _initVideoPlayer();
+    //_talks= getTalkstByTagList(widget.selectedTags);
     
   }
 
-  void _initializeVideoPlayer() async {
-    _videoPlayerController =
-        VideoPlayerController.asset('assets/videos/video.mp4');
-    await _videoPlayerController.initialize();
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      autoPlay: true,
-      looping: true,
-      allowPlaybackSpeedChanging: true,
-      allowFullScreen: true,
-      placeholder: Container(
-        color: Colors.black,
-      ),
-    );
-    setState(() {});
+void _initVideoPlayer() async {
+    try {
+      _videoPlayerController = VideoPlayerController.networkUrl(
+        Uri.parse(
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        ),
+      );
+      await _videoPlayerController.initialize().then((_) {
+        _chewieController = ChewieController(
+          videoPlayerController: _videoPlayerController,
+          autoPlay: true,
+          looping: true,
+          allowPlaybackSpeedChanging: true,
+          allowFullScreen: true,
+          placeholder: Container(
+            color: Colors.black,
+          ),
+        );
+        setState(() {});
+      });
+    } catch (e) {
+      print('Error initializing video player: $e');
+    }
   }
 
   @override
@@ -51,6 +61,17 @@ class _SecondPageState extends State<SecondPage> {
     _videoPlayerController.dispose();
     _chewieController.dispose();
     super.dispose();
+  }
+
+    void _launchUrl() async {
+    final url = 'https://www.ted.com/talks/jessie_christiansen_what_the_discovery_of_exoplanets_reveals_about_the_universe';
+    // ignore: deprecated_member_use
+    if (await canLaunch(url)) {
+      // ignore: deprecated_member_use
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -101,7 +122,7 @@ class _SecondPageState extends State<SecondPage> {
             ),
             Container(
               width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.7,
+              height: MediaQuery.of(context).size.height * 0.65,
               child: AspectRatio(
                 aspectRatio: _videoPlayerController.value.aspectRatio,
                 child: Chewie(
@@ -121,7 +142,7 @@ class _SecondPageState extends State<SecondPage> {
                 ),
                 width: double.infinity,
                 padding: EdgeInsets.all(8.0),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -131,6 +152,10 @@ class _SecondPageState extends State<SecondPage> {
                     Text(
                       'Sample video description',
                       style:fontStyles.TalkSubitle,
+                    ),
+                    ElevatedButton(
+                      onPressed: _launchUrl,
+                      child: Text('Visit TED.com'),
                     ),
                   ], 
                 ),
