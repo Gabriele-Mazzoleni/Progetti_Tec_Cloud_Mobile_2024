@@ -63,9 +63,7 @@ class _SecondPageState extends State<SecondPage> {
   }
 
   void _launchUrl(String url) async {
-    // ignore: deprecated_member_use
     if (await canLaunch(url)) {
-      // ignore: deprecated_member_use
       await launch(url);
     } else {
       throw 'Could not launch $url';
@@ -94,7 +92,7 @@ class _SecondPageState extends State<SecondPage> {
           } else {
             List<Talk> talks = snapshot.data!;
             return PageView.builder(
-              scrollDirection: Axis.vertical,
+              scrollDirection: Axis.vertical, // Abilita lo scorrimento verticale
               itemCount: talks.length,
               itemBuilder: (context, index) {
                 Talk talk = talks[index];
@@ -126,7 +124,7 @@ class _SecondPageState extends State<SecondPage> {
                           Expanded(
                             child: Center(
                               child: Image.asset(
-                                'assets/images/Logo_Bianco.png', // Path to the image asset
+                                'assets/images/Logo_Bianco.png', // Percorso per l'immagine
                                 height: sizes.imgSize,
                               ),
                             ),
@@ -151,7 +149,7 @@ class _SecondPageState extends State<SecondPage> {
                     Expanded(
                       child: Container(
                         decoration: const BoxDecoration(
-                          color: tedTokColors.tokBlue, // Rosso TedTok
+                          color: tedTokColors.tokBlue, // Blu TedTok
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(sizes.stdRoundedCorner),
                             topRight: Radius.circular(sizes.stdRoundedCorner),
