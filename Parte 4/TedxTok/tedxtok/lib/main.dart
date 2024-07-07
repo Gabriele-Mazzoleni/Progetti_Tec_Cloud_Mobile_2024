@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
@@ -191,6 +192,7 @@ class CheckboxRow extends StatelessWidget {
     );
   }
 }
+
 class SecondPage extends StatefulWidget {
   final List<String> selectedTags;
 
@@ -242,8 +244,20 @@ class _SecondPageState extends State<SecondPage> {
     super.dispose();
   }
 
-@override
+  void _launchUrl() async {
+    final url = 'https://www.ted.com/talks/jessie_christiansen_what_the_discovery_of_exoplanets_reveals_about_the_universe';
+    // ignore: deprecated_member_use
+    if (await canLaunch(url)) {
+    // ignore: deprecated_member_use
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    
     if (_videoPlayerController.value.isInitialized) {
       return Scaffold(
         body: Column(
@@ -265,7 +279,7 @@ class _SecondPageState extends State<SecondPage> {
             ),
             Container(
               width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.8,
+              height: MediaQuery.of(context).size.height * 0.6,
               child: AspectRatio(
                 aspectRatio: _videoPlayerController.value.aspectRatio,
                 child: Chewie(
@@ -278,12 +292,21 @@ class _SecondPageState extends State<SecondPage> {
                 color: Colors.blue,
                 width: double.infinity,
                 padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'This is a sample video description. You can add your own video description here',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.white,
-                  ),
+                child: Column(
+                  children: [
+                    Text(
+                      'This is a sample video description. You can add your own video description here',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 20.0),
+                    ElevatedButton(
+                      onPressed: _launchUrl,
+                      child: Text('Visit TED.com'),
+                    ),
+                  ],
                 ),
               ),
             ),
