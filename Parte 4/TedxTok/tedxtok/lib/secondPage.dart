@@ -131,9 +131,15 @@ class _SecondPageState extends State<SecondPage> {
                               ),
                             ),
                           ),
-                          const Align(
+                             Align(
                             alignment: Alignment.centerRight,
-                            child: Icon(Icons.send_rounded, color: Colors.white, size: sizes.iconSize),
+                            child: InkWell(
+                              onTap: () {
+                                _launchUrl(talk.url);
+                              },
+                              child: Icon(Icons.send_rounded,
+                                  color: Colors.white, size: sizes.iconSize),
+                            ),
                           ),
                         ],
                       ),
