@@ -30,9 +30,6 @@ module.exports.get_by_tag = (event, context, callback) => {
         return;
     }
 
-    if (!body.doc_per_page) {
-        body.doc_per_page = 10;
-    }
     if (!body.page) {
         body.page = 1;
     }
@@ -53,16 +50,10 @@ module.exports.get_by_tag = (event, context, callback) => {
                 }, []);
 
                 console.log('Unique talks:', uniqueTalks.length);
-
-                // Applica la paginazione
-                const paginatedTalks = uniqueTalks.slice(
-                    (body.doc_per_page * (body.page - 1)),
-                    (body.doc_per_page * body.page)
-                );
-
+                
                 callback(null, {
                     statusCode: 200,
-                    body: JSON.stringify(paginatedTalks)
+                    body: JSON.stringify(uniqueTalks)
                 });
             })
             .catch(err => {

@@ -19,7 +19,6 @@ Future<List<Talk>> getTalkstByTagList(List tags) async {
     },
     body: jsonEncode(<String, Object>{
       'tags': tags,
-      'doc_per_page': 1
     }),
   );
   if (response.statusCode == 200) {
