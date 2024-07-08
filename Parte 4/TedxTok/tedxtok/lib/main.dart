@@ -3,7 +3,7 @@ import 'package:tedxtok/Models/topicItem.dart';
 import 'package:tedxtok/Styles/TedTokColors.dart';
 import 'package:tedxtok/Styles/fontStyles.dart';
 import 'package:tedxtok/Styles/sizes.dart';
-import 'package:tedxtok/secondPage.dart';
+import 'package:tedxtok/secondpage.dart';
 
 
 void main() {
