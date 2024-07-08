@@ -178,7 +178,7 @@ class _SecondPageState extends State<SecondPage> {
                               talk.mainSpeaker,
                               style: fontStyles.TalkSubitle),
                             Text(
-                              'Durata: ${talk.duration} secondi',
+                              'Duration: ${talk.duration} seconds',
                               style: fontStyles.TalkSubitle),
                             /*ElevatedButton(
                               onPressed: () => _launchUrl(talk.url),
