@@ -131,7 +131,7 @@ class _SecondPageState extends State<SecondPage> {
                               ),
                             ),
                           ),
-                             Align(
+                          Align(
                             alignment: Alignment.centerRight,
                             child: InkWell(
                               onTap: () {
