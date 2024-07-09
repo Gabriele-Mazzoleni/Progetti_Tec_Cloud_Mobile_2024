@@ -5,10 +5,8 @@ import 'package:tedxtok/Models/Talk.dart';
 import 'package:tedxtok/Styles/TedTokColors.dart';
 import 'package:tedxtok/Styles/fontStyles.dart';
 import 'package:tedxtok/Styles/sizes.dart';
-import 'package:video_player/video_player.dart';
-import 'package:chewie/chewie.dart';
 import 'package:url_launcher/url_launcher.dart';
-//import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class SecondPage extends StatefulWidget {
   final List<String> selectedTags;
@@ -21,57 +19,55 @@ class SecondPage extends StatefulWidget {
 
 class _SecondPageState extends State<SecondPage> {
   late Future<List<Talk>> _talks;
-  late VideoPlayerController _videoPlayerController;
-  late ChewieController _chewieController;
-  //InAppWebViewController? _webViewController; //codice in prova
+  InAppWebViewController? _webViewController;
 
   @override
   void initState() {
     super.initState();
-    _initVideoPlayer();
     _talks = getTalkstByTagList(widget.selectedTags);
   }
 
-  void _initVideoPlayer() async {
-    try {
-      _videoPlayerController = VideoPlayerController.networkUrl(
-        Uri.parse(
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-        ),
-      );
-      await _videoPlayerController.initialize().then((_) {
-        _chewieController = ChewieController(
-          videoPlayerController: _videoPlayerController,
-          autoPlay: true,
-          looping: true,
-          allowPlaybackSpeedChanging: true,
-          allowFullScreen: true,
-          placeholder: Container(
-            color: Colors.black,
-          ),
-        );
-        setState(() {});
-      });
-    } catch (e) {
-      print('Error initializing video player: $e');
-    }
-  }
-
-  @override
-  void dispose() {
-    _videoPlayerController.dispose();
-    _chewieController.dispose();
-    super.dispose();
-  }
-
   void _launchUrl(String url) async {
-    // ignore: deprecated_member_use
     if (await canLaunch(url)) {
-      // ignore: deprecated_member_use
       await launch(url);
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  String _buildHtmlVideoPage(String videoUrl) {
+    // Estrae l'ID del talk dall'URL
+    final talkId = videoUrl.split('/').last;
+    final embedUrl = 'https://embed.ted.com/talks/$talkId';
+
+    return '''
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+          }
+          iframe {
+            width: 100%;
+            height: 100%;
+          }
+        </style>
+      </head>
+      <body>
+        <iframe src="$embedUrl" frameborder="0" allowfullscreen></iframe>
+      </body>
+      </html>
+    ''';
   }
 
   @override
@@ -96,11 +92,14 @@ class _SecondPageState extends State<SecondPage> {
           } else {
             List<Talk> talks = snapshot.data!;
             return PageView.builder(
-              scrollDirection: Axis.vertical, // Abilita lo scorrimento verticale
+              scrollDirection:
+                  Axis.vertical, // Abilita lo scorrimento verticale
               itemCount: talks.length,
               itemBuilder: (context, index) {
                 Talk talk = talks[index];
-                //String url=talk.url;
+                String videoUrl = talk.url;
+                String htmlString = _buildHtmlVideoPage(videoUrl);
+
                 return Column(
                   children: [
                     //header
@@ -123,7 +122,8 @@ class _SecondPageState extends State<SecondPage> {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              icon: Icon(Icons.arrow_back_rounded, color: Colors.white, size: sizes.iconSize),
+                              icon: Icon(Icons.arrow_back_rounded,
+                                  color: Colors.white, size: sizes.iconSize),
                             ),
                           ),
                           Expanded(
@@ -150,49 +150,25 @@ class _SecondPageState extends State<SecondPage> {
                     Container(
                       width: double.infinity,
                       height: MediaQuery.of(context).size.height * 0.65,
-
-                      /*alternativa 1, immagine statica da cliccare per accedere al video completo sul sito web Tedx
-                      */
-
-                      /* alternativa 2, video player, sfortunatamente servono URL a risorse mp4 dei video, a cui non abbiamo accesso
-                      child: AspectRatio(
-                        aspectRatio: _videoPlayerController.value.aspectRatio,
-                        child: Chewie(
-                          controller: _chewieController,
-                        ),
-                      ),*/
-
-                      /*alternativa 3, mostrare la pagina web TedX, poco elegante, stona con le scelte grafiche dell'app
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
-                          child: InAppWebView(
-                            
-                            initialUrlRequest: URLRequest(url: WebUri(url)),
-                            initialSettings: InAppWebViewSettings(
-                              javaScriptEnabled: true, // Abilita JavaScript
-                              useOnLoadResource: true, // Utilizza per il caricamento delle risorse
-                             
-                            ),
-                             onWebViewCreated: (controller) {
-                              _webViewController = controller;
-                            },
-                            // ignore: deprecated_member_use
-                            onLoadError: (controller, url, code, message) {
-                              print('WebView error: $code, $message');
-                            },
+                        child: InAppWebView(
+                          initialData:
+                              InAppWebViewInitialData(data: htmlString),
+                          initialSettings: InAppWebViewSettings(
+                            javaScriptEnabled: true, // Abilita JavaScript
+                            useOnLoadResource:
+                                true, // Utilizza per il caricamento delle risorse
                           ),
-                      ),
-                      */
-
-                      //placeholder
-                      child: Center(
-                        child: Text(
-                          'Video Player Placeholder',
-                          style: TextStyle(color: Colors.white),
-                          ),
+                          onWebViewCreated: (controller) {
+                            _webViewController = controller;
+                          },
+                          onLoadError: (controller, url, code, message) {
+                            print('WebView error: $code, $message');
+                          },
                         ),
+                      ),
                     ),
-                    
                     Expanded(
                       child: Container(
                         decoration: const BoxDecoration(
@@ -211,17 +187,10 @@ class _SecondPageState extends State<SecondPage> {
                               talk.title,
                               style: fontStyles.TalkTitle,
                             ),
-                           
-                            Text(
-                              talk.mainSpeaker,
-                              style: fontStyles.TalkSubitle),
-                            Text(
-                              'Duration: ${talk.duration} seconds',
-                              style: fontStyles.TalkSubitle),
-                            /*ElevatedButton(
-                              onPressed: () => _launchUrl(talk.url),
-                              child: Text('Visit TED.com'),
-                            ),*/
+                            Text(talk.mainSpeaker,
+                                style: fontStyles.TalkSubitle),
+                            Text('Duration: ${talk.duration} seconds',
+                                style: fontStyles.TalkSubitle),
                           ],
                         ),
                       ),
