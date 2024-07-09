@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:tedxtok/Functions/buildHtmlVideoPage.dart';
 import 'package:tedxtok/Functions/talk_list.dart';
 import 'package:tedxtok/Models/Talk.dart';
 import 'package:tedxtok/Styles/TedTokColors.dart';
@@ -19,7 +20,7 @@ class SecondPage extends StatefulWidget {
 
 class _SecondPageState extends State<SecondPage> {
   late Future<List<Talk>> _talks;
-  InAppWebViewController? _webViewController;
+  late InAppWebViewController? _webViewController;
 
   @override
   void initState() {
@@ -35,40 +36,7 @@ class _SecondPageState extends State<SecondPage> {
     }
   }
 
-  String _buildHtmlVideoPage(String videoUrl) {
-    // Estrae l'ID del talk dall'URL
-    final talkId = videoUrl.split('/').last;
-    final embedUrl = 'https://embed.ted.com/talks/$talkId';
-
-    return '''
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-          body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: black;
-          }
-          iframe {
-            width: 100%;
-            height: 100%;
-          }
-        </style>
-      </head>
-      <body>
-        <iframe src="$embedUrl" frameborder="0" allowfullscreen></iframe>
-      </body>
-      </html>
-    ''';
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -79,15 +47,18 @@ class _SecondPageState extends State<SecondPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: tedTokColors.tokBlue,
+              ),
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('Error: ${snapshot.error}'),
+              child: Text('Error: ${snapshot.error}'
+              ),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(
-              child: Text('No talks available'),
+              child: Text('No talks available',style: fontStyles.ErrorText,),
             );
           } else {
             List<Talk> talks = snapshot.data!;
@@ -98,7 +69,7 @@ class _SecondPageState extends State<SecondPage> {
               itemBuilder: (context, index) {
                 Talk talk = talks[index];
                 String videoUrl = talk.url;
-                String htmlString = _buildHtmlVideoPage(videoUrl);
+                String htmlString = buildHtmlVideoPage(videoUrl);
 
                 return Column(
                   children: [
@@ -140,7 +111,7 @@ class _SecondPageState extends State<SecondPage> {
                               onTap: () {
                                 _launchUrl(talk.url);
                               },
-                              child: Icon(Icons.send_rounded,
+                              child: Icon(Icons.link_rounded,
                                   color: Colors.white, size: sizes.iconSize),
                             ),
                           ),
@@ -151,14 +122,13 @@ class _SecondPageState extends State<SecondPage> {
                       width: double.infinity,
                       height: MediaQuery.of(context).size.height * 0.65,
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(sizes.smallRoundedCorner),
                         child: InAppWebView(
                           initialData:
                               InAppWebViewInitialData(data: htmlString),
                           initialSettings: InAppWebViewSettings(
                             javaScriptEnabled: true, // Abilita JavaScript
-                            useOnLoadResource:
-                                true, // Utilizza per il caricamento delle risorse
+                            useOnLoadResource: true, // Utilizza per il caricamento delle risorse
                           ),
                           onWebViewCreated: (controller) {
                             _webViewController = controller;
