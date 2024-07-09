@@ -8,6 +8,7 @@ import 'package:tedxtok/Styles/sizes.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:url_launcher/url_launcher.dart';
+//import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class SecondPage extends StatefulWidget {
   final List<String> selectedTags;
@@ -22,6 +23,7 @@ class _SecondPageState extends State<SecondPage> {
   late Future<List<Talk>> _talks;
   late VideoPlayerController _videoPlayerController;
   late ChewieController _chewieController;
+  //InAppWebViewController? _webViewController; //codice in prova
 
   @override
   void initState() {
@@ -98,6 +100,7 @@ class _SecondPageState extends State<SecondPage> {
               itemCount: talks.length,
               itemBuilder: (context, index) {
                 Talk talk = talks[index];
+                //String url=talk.url;
                 return Column(
                   children: [
                     //header
@@ -147,18 +150,47 @@ class _SecondPageState extends State<SecondPage> {
                     Container(
                       width: double.infinity,
                       height: MediaQuery.of(context).size.height * 0.65,
-                        child: Center(
-                          child: Text(
-                            'Video Player Placeholder',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      /*child: AspectRatio(
+
+                      /*alternativa 1, immagine statica da cliccare per accedere al video completo sul sito web Tedx
+                      */
+
+                      /* alternativa 2, video player, sfortunatamente servono URL a risorse mp4 dei video, a cui non abbiamo accesso
+                      child: AspectRatio(
                         aspectRatio: _videoPlayerController.value.aspectRatio,
                         child: Chewie(
                           controller: _chewieController,
                         ),
                       ),*/
+
+                      /*alternativa 3, mostrare la pagina web TedX, poco elegante, stona con le scelte grafiche dell'app
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                          child: InAppWebView(
+                            
+                            initialUrlRequest: URLRequest(url: WebUri(url)),
+                            initialSettings: InAppWebViewSettings(
+                              javaScriptEnabled: true, // Abilita JavaScript
+                              useOnLoadResource: true, // Utilizza per il caricamento delle risorse
+                             
+                            ),
+                             onWebViewCreated: (controller) {
+                              _webViewController = controller;
+                            },
+                            // ignore: deprecated_member_use
+                            onLoadError: (controller, url, code, message) {
+                              print('WebView error: $code, $message');
+                            },
+                          ),
+                      ),
+                      */
+
+                      //placeholder
+                      child: Center(
+                        child: Text(
+                          'Video Player Placeholder',
+                          style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                     ),
                     
                     Expanded(
