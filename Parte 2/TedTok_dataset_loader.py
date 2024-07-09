@@ -83,6 +83,20 @@ tedx_dataset_agg = tedx_dataset_main.join(tags_dataset_agg, tedx_dataset.id == t
 
 tedx_dataset_agg.printSchema()
 
+# ADD IMAGES TO DATASET
+images_dataset_path = "s3://tedx-2024-data-mazzoleni-g/images.csv"
+images_dataset = details_dataset = spark.read.option("header","true").csv(images_dataset_path)
+
+# AGGREGATED IMAGE DATASET
+images_dataset_agg = images_dataset.select(col("id").alias("id_ref"),col("url").alias("imageUrl"))
+images_dataset_agg.printSchema()
+
+tedx_dataset_full = tedx_dataset_agg.join(images_dataset_agg, tedx_dataset_agg._id == images_dataset_agg.id_ref, "left") \
+    .drop("id_ref") \
+    .select(col("_id"), col("*")) \
+    
+tedx_dataset_full.printSchema()
+
 # ADDITION OF 'WATCH NEXT' LINKS TO DATASET
 related_dataset_path = "s3://tedx-2024-data-mazzoleni-g/related_videos.csv"
 related_dataset = details_dataset = spark.read.option("header","true").csv(related_dataset_path)
@@ -94,17 +108,14 @@ related_dataset_with_urls=related_dataset.join(tedx_dataset, related_dataset.int
 related_dataset_agg = related_dataset_with_urls.groupBy(col("id").alias("id_ref")) \
     .agg(collect_list(struct(col("related_id").alias("related_video_ids"), col("title").alias("related_video_title"),
      col("presenterDisplayName").alias("related_presentedBy"), col("related_url"))).alias("Related_videos"))
-        
-    
-
 
 related_dataset_agg.printSchema()
 
-tedx_dataset_full = tedx_dataset_agg.join(related_dataset_agg, tedx_dataset_agg._id == related_dataset_agg.id_ref, "left") \
+tedTok_dataset_full = tedx_dataset_full.join(related_dataset_agg, tedx_dataset_agg._id == related_dataset_agg.id_ref, "left") \
     .drop("id_ref") \
     .select(col("_id"), col("*")) \
     
-tedx_dataset_full.printSchema()
+tedTok_dataset_full.printSchema()
 
 write_mongo_options = {
     "connectionName": "TEDx 2024 by GabTheBest",
@@ -113,7 +124,7 @@ write_mongo_options = {
     "ssl": "true",
     "ssl.domain_match": "false"}
 from awsglue.dynamicframe import DynamicFrame
-tedx_dataset_dynamic_frame = DynamicFrame.fromDF(tedx_dataset_full, glueContext, "nested")
+tedx_dataset_dynamic_frame = DynamicFrame.fromDF(tedTok_dataset_full, glueContext, "nested")
 
 glueContext.write_dynamic_frame.from_options(tedx_dataset_dynamic_frame, connection_type="mongodb", connection_options=write_mongo_options)
 
