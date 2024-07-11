@@ -22,6 +22,7 @@ class SecondPage extends StatefulWidget {
 class _SecondPageState extends State<SecondPage> {
   late Future<List<Talk>> _talks;
   late InAppWebViewController? _webViewController;
+  PageController _pageController = PageController();
   Timer? _timer;
 
   @override
@@ -36,14 +37,28 @@ class _SecondPageState extends State<SecondPage> {
     super.dispose();
   }
 
-  void _stopVideo() {
-    _webViewController?.loadUrl(urlRequest: URLRequest(url: Uri.parse('about:blank')));
+ void _stopVideo(List<Talk> talks) {
+  int currentPage = _pageController.page?.toInt() ?? 0;
+  if (currentPage < talks.length - 1) {
+    _pageController.animateToPage(
+      currentPage + 1,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
+  } else {
+    _pageController.animateToPage(
+      0,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
   }
+}
 
-  void _startTimer() {
-    _timer?.cancel(); // Cancella qualsiasi timer esistente
-    _timer = Timer(Duration(minutes: 1), _stopVideo); // Imposta il timer per 1 minuto
-  }
+  void _startTimer(List<Talk> talks) {
+  _timer?.cancel(); // Cancella qualsiasi timer esistente
+  _timer = Timer(Duration(minutes: 1), () => _stopVideo(talks)); // Imposta il timer per 1 minuto
+}
+
   
   void _launchUrl(String url) async {
     // ignore: deprecated_member_use
@@ -81,6 +96,7 @@ class _SecondPageState extends State<SecondPage> {
           } else {
             List<Talk> talks = snapshot.data!;
             return PageView.builder(
+              controller: _pageController,
               scrollDirection:
                   Axis.vertical, // Abilita lo scorrimento verticale
               itemCount: talks.length,
@@ -150,7 +166,7 @@ class _SecondPageState extends State<SecondPage> {
                           ),
                           onWebViewCreated: (controller) {
                             _webViewController = controller;
-                            _startTimer(); // Avvia il timer quando il WebView viene creato
+                            _startTimer(talks); // Avvia il timer quando il WebView viene creato
                           },
                           onLoadError: (controller, url, code, message) {
                             print('WebView error: $code, $message');

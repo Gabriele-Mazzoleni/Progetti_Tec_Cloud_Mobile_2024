@@ -1,5 +1,5 @@
 const connect_to_db = require('./db');
-const talk = require('./User');
+const appUser = require('./User');
 
 module.exports.log_in = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
@@ -26,7 +26,7 @@ module.exports.log_in = (event, context, callback) => {
         });
     }
 
-    if (!body.mail) {
+    if (!body.password) {
         return callback(null, {
             statusCode: 400,
             headers: { 'Content-Type': 'text/plain' },
