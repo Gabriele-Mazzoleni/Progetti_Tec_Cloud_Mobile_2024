@@ -1,13 +1,14 @@
 Migliorie progetto cloud
 -PySpark:
-Ritaglio dei video??
-Cose per login -> vedi GitHub Lara
+Job per login OK
+altro?
 
 -Lambda:
-Qualcosa che sfrutti il database TedTok_tags
-LF per login
+Qualcosa che sfrutti il database TedTok_tags?
+LF per login OK
 
 -Flutter:
+Ritaglio dei video OK
 Aggiunta login profilo
 Aggiunta preferiti, visualizzabili nel proprio profilo
-Filtro di ricerca
+Filtro di ricerca per i tag
