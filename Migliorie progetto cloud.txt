@@ -1,0 +1,13 @@
+Migliorie progetto cloud
+-PySpark:
+Ritaglio dei video??
+Cose per login -> vedi GitHub Lara
+
+-Lambda:
+Qualcosa che sfrutti il database TedTok_tags
+LF per login
+
+-Flutter:
+Aggiunta login profilo
+Aggiunta preferiti, visualizzabili nel proprio profilo
+Filtro di ricerca
