@@ -8,6 +8,7 @@ import 'package:tedxtok/Styles/fontStyles.dart';
 import 'package:tedxtok/Styles/sizes.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'dart:async';
 
 class SecondPage extends StatefulWidget {
   final List<String> selectedTags;
@@ -21,6 +22,7 @@ class SecondPage extends StatefulWidget {
 class _SecondPageState extends State<SecondPage> {
   late Future<List<Talk>> _talks;
   late InAppWebViewController? _webViewController;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -28,6 +30,21 @@ class _SecondPageState extends State<SecondPage> {
     _talks = getTalkstByTagList(widget.selectedTags);
   }
 
+   @override
+  void dispose() { // Cancella il timer se esiste quando la pagina viene eliminata
+    _timer?.cancel(); 
+    super.dispose();
+  }
+
+  void _stopVideo() {
+    _webViewController?.loadUrl(urlRequest: URLRequest(url: Uri.parse('about:blank')));
+  }
+
+  void _startTimer() {
+    _timer?.cancel(); // Cancella qualsiasi timer esistente
+    _timer = Timer(Duration(minutes: 1), _stopVideo); // Imposta il timer per 1 minuto
+  }
+  
   void _launchUrl(String url) async {
     // ignore: deprecated_member_use
     if (await canLaunch(url)) {
@@ -38,7 +55,6 @@ class _SecondPageState extends State<SecondPage> {
     }
   }
 
- 
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +150,7 @@ class _SecondPageState extends State<SecondPage> {
                           ),
                           onWebViewCreated: (controller) {
                             _webViewController = controller;
+                            _startTimer(); // Avvia il timer quando il WebView viene creato
                           },
                           onLoadError: (controller, url, code, message) {
                             print('WebView error: $code, $message');
