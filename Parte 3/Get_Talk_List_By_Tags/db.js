@@ -1,10 +1,7 @@
 // CONNECTION TO DB
-
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 let isConnected;
-
-
 require('dotenv').config({ path: './variables.env' });
 
 module.exports = connect_to_db = () => {

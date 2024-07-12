@@ -29,11 +29,7 @@ module.exports.get_by_tag = (event, context, callback) => {
         });
         return;
     }
-
-    if (!body.page) {
-        body.page = 1;
-    }
-
+    
     connect_to_db().then(() => {
         console.log('=> get_all talks');
         talk.find({ tags: { $in: tags } })
