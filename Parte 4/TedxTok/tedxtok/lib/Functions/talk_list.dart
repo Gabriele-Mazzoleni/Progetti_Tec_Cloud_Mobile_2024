@@ -11,7 +11,7 @@ Future<List<Talk>> initEmptyList() async {
 }
 
 Future<List<Talk>> getTalkstByTagList(List tags) async {
-  var url = Uri.parse('https://kz0253u01m.execute-api.us-east-1.amazonaws.com/default/Get_Talk_List_By_Tags');
+  var url = Uri.parse('https://j962apid8l.execute-api.us-east-1.amazonaws.com/default/get_talk_list_by_tags');
 
   final http.Response response = await http.post(url,
     headers: <String, String>{
