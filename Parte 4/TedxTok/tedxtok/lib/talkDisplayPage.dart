@@ -10,16 +10,16 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'dart:async';
 
-class SecondPage extends StatefulWidget {
+class TalkDisplayPage extends StatefulWidget {
   final List<String> selectedTags;
 
-  SecondPage({required this.selectedTags});
+  TalkDisplayPage({required this.selectedTags});
 
   @override
-  _SecondPageState createState() => _SecondPageState();
+  _TalkDisplayPageState createState() => _TalkDisplayPageState();
 }
 
-class _SecondPageState extends State<SecondPage> {
+class _TalkDisplayPageState extends State<TalkDisplayPage> {
   late Future<List<Talk>> _talks;
   late InAppWebViewController? _webViewController;
   PageController _pageController = PageController();
