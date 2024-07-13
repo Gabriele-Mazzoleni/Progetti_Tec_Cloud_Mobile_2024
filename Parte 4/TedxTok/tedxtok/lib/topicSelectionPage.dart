@@ -14,7 +14,6 @@ class TopicSelectionPage extends StatefulWidget {
 }
 
 class _TopicSelectionPageState extends State<TopicSelectionPage> {
-  // Lista dei topic, per la build demo iniziamo con 20 argomenti possibili
   final List<String> topics = [
     'TED Membership',
     'evolution',
@@ -38,25 +37,28 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
     'metaverse',
   ];
 
-  // Lista di booleani per tenere traccia dello stato delle checkbox
   late List<bool> checkedTopics;
+  String searchQuery = '';
 
   @override
   void initState() {
     super.initState();
-    // Inizializza la lista dei booleani con 'false'
     checkedTopics = List<bool>.filled(topics.length, false);
   }
 
   @override
   Widget build(BuildContext context) {
+    List<String> filteredTopics = topics
+        .where(
+            (topic) => topic.toLowerCase().contains(searchQuery.toLowerCase()))
+        .toList();
+
     return SafeArea(
       child: Column(
         children: [
-          // Header
           Container(
             decoration: const BoxDecoration(
-              color: tedTokColors.tedRed, // Rosso TedTok
+              color: tedTokColors.tedRed,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(sizes.stdRoundedCorner),
                 bottomRight: Radius.circular(sizes.stdRoundedCorner),
@@ -83,14 +85,13 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
                   ],
                 ),
                 Image.asset(
-                  'assets/images/Logo_Bianco.png', // Path to the image asset
+                  'assets/images/Logo_Bianco.png',
                   height: sizes.imgSize,
                 ),
               ],
             ),
           ),
           SizedBox(height: 20),
-          // Instructions
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
@@ -100,7 +101,6 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
             ),
           ),
           SizedBox(height: 20),
-          // List of Topics
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -110,45 +110,64 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
                   border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(sizes.smallRoundedCorner),
                 ),
-                child: ListView.builder(
-                  itemCount: topics.length,
-                  itemBuilder: (context, index) {
-                    return topicItem(
-                      topic: topics[index],
-                      isChecked: checkedTopics[index],
-                      onChanged: (bool? value) {
+                child: Column(
+                  children: [
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search for a topic',
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(sizes.smallRoundedCorner),
+                        ),
+                      ),
+                      onChanged: (value) {
                         setState(() {
-                          checkedTopics[index] = value ?? false;
+                          searchQuery = value;
                         });
                       },
-                    );
-                  },
+                    ),
+                    SizedBox(height: 20),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: filteredTopics.length,
+                        itemBuilder: (context, index) {
+                          String topic = filteredTopics[index];
+                          int originalIndex = topics.indexOf(topic);
+                          return topicItem(
+                            topic: topic,
+                            isChecked: checkedTopics[originalIndex],
+                            onChanged: (bool? value) {
+                              setState(() {
+                                checkedTopics[originalIndex] = value ?? false;
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
           SizedBox(height: 20),
-          // Button
-
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: tedTokColors.tokBlue, // Azzurro TedTok
+                backgroundColor: tedTokColors.tokBlue,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(sizes.stdRoundedCorner),
                 ),
                 padding: EdgeInsets.symmetric(vertical: 15),
               ),
               onPressed: () {
-                // Raccogli i tag selezionati
                 List<String> selectedTopics = [];
                 for (int i = 0; i < topics.length; i++) {
                   if (checkedTopics[i]) {
                     selectedTopics.add(topics[i]);
                   }
                 }
-                // Naviga alla seconda pagina
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -171,4 +190,3 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
     );
   }
 }
-
