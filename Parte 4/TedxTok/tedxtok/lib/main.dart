@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:video_player/video_player.dart';
-import 'package:chewie/chewie.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,73 +12,67 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: TopicSelectionPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class TopicSelectionPage extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _TopicSelectionPageState createState() => _TopicSelectionPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  List<bool> _isChecked = [];
-  List<String> _tags = [
-    'Immigration',
-    'TED Connects',
-    'Decision-making',
-    'Marketing',
-    'Planets',
-    'Beauty',
-    'Photography',
-    'AI',
-    'Motivation',
-    'Painting',
-    'Egypt',
-    'Crime',
-    'Design',
-    'Discovery',
-    'Exercise',
-    'Medical research',
-    'Sleep',
-    'Evolution',
-    'Leadership',
-    'Gaming',
+class _TopicSelectionPageState extends State<TopicSelectionPage> {
+  final List<String> topics = [
+    'TED Membership',
+    'evolution',
+    'wildlife',
+    'aliens',
+    'bionics',
+    'painting',
+    'personal growth',
+    'war',
+    'augmented reality',
+    'communication',
+    'crime',
+    'encryption',
+    'medical research',
+    'nuclear energy',
+    'ocean',
+    'religion',
+    'sleep',
+    'visualizations',
+    'beauty',
+    'metaverse',
   ];
+
+  late List<bool> checkedTopics;
+  String searchQuery = '';
 
   @override
   void initState() {
     super.initState();
-    _isChecked = List.filled(_tags.length, false);
+    checkedTopics = List<bool>.filled(topics.length, false);
   }
 
   @override
   Widget build(BuildContext context) {
+    List<String> filteredTopics = topics
+        .where(
+            (topic) => topic.toLowerCase().contains(searchQuery.toLowerCase()))
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
-        title: Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-          decoration: BoxDecoration(
-            color: Colors.red,
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: Text(
-            'Welcome to TedxTok',
-            style: TextStyle(color: Colors.white, fontSize: 20.0),
-            textAlign: TextAlign.center,
-          ),
-        ),
+        title: Text('TedxTok'),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: Colors.red,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
                 padding: EdgeInsets.all(16.0),
@@ -96,63 +87,72 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
                       'Please select a list of topics that might interest you:',
                       style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    SizedBox(height: 10.0), // Spazio tra il testo e i checkbox
+                    SizedBox(height: 10.0),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search for a topic',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          searchQuery = value;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 10.0),
                     Column(
-                      children: _tags.map((tag) {
-                        int index = _tags.indexOf(tag);
-                        return CheckboxRow(
-                          index: index,
-                          isChecked: _isChecked[index],
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: filteredTopics.map((topic) {
+                        int index = topics.indexOf(topic);
+                        return CheckboxListTile(
+                          title: Text(topic),
+                          value: checkedTopics[index],
                           onChanged: (bool? value) {
                             setState(() {
-                              _isChecked[index] = value ?? false;
+                              checkedTopics[index] = value ?? false;
                             });
                           },
-                          tag: tag,
                         );
                       }).toList(),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 20.0), // Margine sopra al bottone
+              SizedBox(height: 20.0),
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    // Get the selected tags
-                    List<String> selectedTags = [];
-                    for (int i = 0; i < _isChecked.length; i++) {
-                      if (_isChecked[i]) {
-                        selectedTags.add(_tags[i]);
+                    List<String> selectedTopics = [];
+                    for (int i = 0; i < topics.length; i++) {
+                      if (checkedTopics[i]) {
+                        selectedTopics.add(topics[i]);
                       }
                     }
-
-                    // Navigate to the next page with selected tags
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            SecondPage(selectedTags: selectedTags),
+                            SecondPage(selectedTags: selectedTopics),
                       ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.lightBlue, // Colore del bottone azzurro
-                    foregroundColor: Colors.white, // Colore del testo bianco
+                    foregroundColor: Colors.white, backgroundColor: Colors.lightBlue,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(10.0), // Bordi arrotondati
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 50,
-                        vertical: 20), // Aumenta l'area di click
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                   ),
                   child: Text("LET'S BEGIN"),
                 ),
@@ -165,163 +165,28 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class CheckboxRow extends StatelessWidget {
-  final int index;
-  final bool isChecked;
-  final ValueChanged<bool?> onChanged;
-  final String tag;
-
-  CheckboxRow({
-    required this.index,
-    required this.isChecked,
-    required this.onChanged,
-    required this.tag,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start, // Align to the left
-      children: [
-        Checkbox(
-          value: isChecked,
-          onChanged: onChanged,
-        ),
-        Text(tag),
-      ],
-    );
-  }
-}
-
-class SecondPage extends StatefulWidget {
+class SecondPage extends StatelessWidget {
   final List<String> selectedTags;
 
   SecondPage({required this.selectedTags});
 
   @override
-  _SecondPageState createState() => _SecondPageState();
-}
-
-class _SecondPageState extends State<SecondPage> {
-  late VideoPlayerController _videoPlayerController;
-  late ChewieController _chewieController;
-
-  @override
-  void initState() {
-    super.initState();
-    _initVideoPlayer();
-  }
-
-  void _initVideoPlayer() async {
-    try {
-      _videoPlayerController = VideoPlayerController.networkUrl(
-        Uri.parse(
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-        ),
-      );
-      await _videoPlayerController.initialize().then((_) {
-        _chewieController = ChewieController(
-          videoPlayerController: _videoPlayerController,
-          autoPlay: true,
-          looping: true,
-          allowPlaybackSpeedChanging: true,
-          allowFullScreen: true,
-          placeholder: Container(
-            color: Colors.black,
-          ),
-        );
-        setState(() {});
-      });
-    } catch (e) {
-      print('Error initializing video player: $e');
-    }
-  }
-
-  @override
-  void dispose() {
-    _videoPlayerController.dispose();
-    _chewieController.dispose();
-    super.dispose();
-  }
-
-  void _launchUrl() async {
-    final url = 'https://www.ted.com/talks/jessie_christiansen_what_the_discovery_of_exoplanets_reveals_about_the_universe';
-    // ignore: deprecated_member_use
-    if (await canLaunch(url)) {
-    // ignore: deprecated_member_use
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    
-    if (_videoPlayerController.value.isInitialized) {
-      return Scaffold(
-        body: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Second Page'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              color: Colors.red,
-              padding: EdgeInsets.all(8.0),
-              width: double.infinity,
-              child: Center(
-                child: Text(
-                  'TedxTok',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.6,
-              child: AspectRatio(
-                aspectRatio: _videoPlayerController.value.aspectRatio,
-                child: Chewie(
-                  controller: _chewieController,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                color: Colors.blue,
-                width: double.infinity,
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Text(
-                      'This is a sample video description. You can add your own video description here',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    ElevatedButton(
-                      onPressed: _launchUrl,
-                      child: Text('Visit TED.com'),
-                    ),
-                  ],
-                ),
-              ),
+            Text('Selected Tags:'),
+            Column(
+              children: selectedTags.map((tag) => Text(tag)).toList(),
             ),
           ],
         ),
-      );
-    } else {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('TedxTok'),
-        ),
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+      ),
+    );
   }
 }
