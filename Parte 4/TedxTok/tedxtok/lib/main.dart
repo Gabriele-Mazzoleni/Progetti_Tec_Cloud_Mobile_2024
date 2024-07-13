@@ -35,6 +35,15 @@ class _LogInPageState extends State<LogInPage> {
   String errorMessage = '';
   bool isLoading = false;
 
+  void _navigateToTopicSelectionPage(UserData user) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TopicSelectionPage(userData: user),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -111,7 +120,7 @@ class _LogInPageState extends State<LogInPage> {
                     SizedBox(height: sizes.smallPaddingSpace),
                     // loginButton
                     if (isLoading)
-                      CircularProgressIndicator()
+                      CircularProgressIndicator(color: tedTokColors.tokBlue)
                     else
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -130,12 +139,7 @@ class _LogInPageState extends State<LogInPage> {
                               _mailController.text,
                               _passwordController.text,
                             );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => TopicSelectionPage(userData: user),
-                              ),
-                            );
+                            _navigateToTopicSelectionPage(user);
                           } catch (e) {
                             setState(() {
                               errorMessage = 'Invalid credentials. Please try again.';
