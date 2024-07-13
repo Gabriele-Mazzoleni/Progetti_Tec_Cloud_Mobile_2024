@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tedxtok/Functions/buildHtmlVideoPage.dart';
+import 'package:tedxtok/Functions/database.dart';
 import 'package:tedxtok/Functions/talk_list.dart';
 import 'package:tedxtok/Models/Talk.dart';
 import 'package:tedxtok/Styles/TedTokColors.dart';
@@ -11,7 +12,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'dart:async';
 
 class TalkDisplayPage extends StatefulWidget {
-  final List<String> selectedTags;
+  final List<TopicItem> selectedTags;
 
   TalkDisplayPage({required this.selectedTags});
 
