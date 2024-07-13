@@ -5,6 +5,7 @@ import 'package:tedxtok/Styles/TedTokColors.dart';
 import 'package:tedxtok/Styles/fontStyles.dart';
 import 'package:tedxtok/Styles/sizes.dart';
 import 'package:tedxtok/talkDisplayPage.dart';
+import 'package:tedxtok/Functions/database.dart'; 
 
 class TopicSelectionPage extends StatefulWidget {
   final UserData userData;
@@ -14,7 +15,7 @@ class TopicSelectionPage extends StatefulWidget {
 }
 
 class _TopicSelectionPageState extends State<TopicSelectionPage> {
-  final List<String> topics = [
+  /*List<String> topics = [
     'TED Membership',
     'evolution',
     'wildlife',
@@ -36,21 +37,26 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
     'beauty',
     'metaverse',
   ];
-
+*/
+  late List<TopicItem> topics;
   late List<bool> checkedTopics;
   String searchQuery = '';
-
   @override
   void initState() {
     super.initState();
-    checkedTopics = List<bool>.filled(topics.length, false);
+    _loadTopics();
+    //checkedTopics = List<bool>.filled(topics.length, false);
   }
-
+  Future<void> _loadTopics() async {
+    topics = await Database.getTopics();
+    checkedTopics = List<bool>.filled(topics.length, false);
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
-    List<String> filteredTopics = topics
+    List<TopicItem> filteredTopics = topics
         .where(
-            (topic) => topic.toLowerCase().contains(searchQuery.toLowerCase()))
+            (topic) => topic.tag.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
 
     return SafeArea(
@@ -131,10 +137,10 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
                       child: ListView.builder(
                         itemCount: filteredTopics.length,
                         itemBuilder: (context, index) {
-                          String topic = filteredTopics[index];
+                          TopicItem topic = filteredTopics[index];
                           int originalIndex = topics.indexOf(topic);
                           return topicItem(
-                            topic: topic,
+                            topic: topic.tag,
                             isChecked: checkedTopics[originalIndex],
                             onChanged: (bool? value) {
                               setState(() {
@@ -162,7 +168,7 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
                 padding: EdgeInsets.symmetric(vertical: 15),
               ),
               onPressed: () {
-                List<String> selectedTopics = [];
+                List<TopicItem> selectedTopics = [];
                 for (int i = 0; i < topics.length; i++) {
                   if (checkedTopics[i]) {
                     selectedTopics.add(topics[i]);
