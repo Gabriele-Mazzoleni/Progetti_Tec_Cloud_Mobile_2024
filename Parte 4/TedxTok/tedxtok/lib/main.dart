@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: LogInPage(),
       ),
     );
@@ -28,7 +29,6 @@ class LogInPage extends StatefulWidget {
   _LogInPageState createState() => _LogInPageState();
 }
 
-// pagina di Login
 class _LogInPageState extends State<LogInPage> {
   final TextEditingController _mailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -44,40 +44,62 @@ class _LogInPageState extends State<LogInPage> {
     );
   }
 
+  Future<void> _login() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+
+    try {
+      final user = await userSearcher(
+        _mailController.text,
+        _passwordController.text,
+      );
+      _navigateToTopicSelectionPage(user);
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Invalid credentials. Please try again.';
+        isLoading = false;
+        _mailController.clear();
+        _passwordController.clear();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        children: [
-          // Logo dell'applicazione
-          Container(
-            padding: EdgeInsets.symmetric(vertical: sizes.smallPaddingSpace),
-            child: Image.asset(
-              alignment: Alignment.center,
-              'assets/images/TedTokLogo.png', // Path to the image asset
-              height: sizes.smallimgSize,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Logo dell'applicazione
+            Container(
+              padding: EdgeInsets.symmetric(vertical: sizes.smallPaddingSpace),
+              child: Image.asset(
+                alignment: Alignment.center,
+                'assets/images/TedTokLogo.png', // Path to the image asset
+                height: sizes.smallimgSize,
+              ),
             ),
-          ),
-          SizedBox(height: sizes.smallPaddingSpace),
-          // Instructions
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                Text(
-                  'Here you can access a wide variety of talks, spanning hundreds of topics!',
-                  style: fontStyles.flavourText,
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: sizes.smallPaddingSpace),
-                CarouselView() // immagini sono predeterminate
-              ],
+            SizedBox(height: sizes.smallPaddingSpace),
+            // Instructions
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                children: [
+                  Text(
+                    'Here you can access a wide variety of talks, spanning hundreds of topics!',
+                    style: fontStyles.flavourText,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: sizes.smallPaddingSpace),
+                  CarouselView() // immagini sono predeterminate
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: sizes.stdPaddingSpace),
-          // log-in/sign-in box
-          Expanded(
-            child: Padding(
+            SizedBox(height: sizes.stdPaddingSpace),
+            // log-in/sign-in box
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
                 padding: EdgeInsets.all(16),
@@ -129,26 +151,7 @@ class _LogInPageState extends State<LogInPage> {
                             borderRadius: BorderRadius.circular(sizes.stdRoundedCorner),
                           ),
                         ),
-                        onPressed: () async {
-                          setState(() {
-                            isLoading = true;
-                            errorMessage = '';
-                          });
-                          try {
-                            final user = await userSearcher(
-                              _mailController.text,
-                              _passwordController.text,
-                            );
-                            _navigateToTopicSelectionPage(user);
-                          } catch (e) {
-                            setState(() {
-                              errorMessage = 'Invalid credentials. Please try again.';
-                              isLoading = false;
-                              _mailController.clear();
-                              _passwordController.clear();
-                            });
-                          }
-                        },
+                        onPressed: _login,
                         child: const Center(
                           child: Text(
                             "LOG IN",
@@ -192,9 +195,9 @@ class _LogInPageState extends State<LogInPage> {
                 ),
               ),
             ),
-          ),
-          SizedBox(height: sizes.stdPaddingSpace),
-        ],
+            SizedBox(height: sizes.stdPaddingSpace),
+          ],
+        ),
       ),
     );
   }

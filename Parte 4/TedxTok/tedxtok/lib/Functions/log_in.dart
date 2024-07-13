@@ -16,6 +16,8 @@ Future<UserData> userSearcher(String mail, String password) async {
     }),
   );
 
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');  
   
   if (response.statusCode == 200) {
     var data = json.decode(response.body);
