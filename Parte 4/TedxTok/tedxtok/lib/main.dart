@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:tedxtok/Functions/log_in.dart';
 import 'package:tedxtok/Models/carousel_view.dart';
@@ -29,16 +28,12 @@ class LogInPage extends StatefulWidget {
   _LogInPageState createState() => _LogInPageState();
 }
 
-
-//pagina di Login
+// pagina di Login
 class _LogInPageState extends State<LogInPage> {
   final TextEditingController _mailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  late Future<UserData> user;
-  @override
-  void initState() {
-    super.initState();
-  }
+  String errorMessage = '';
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -66,14 +61,12 @@ class _LogInPageState extends State<LogInPage> {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: sizes.smallPaddingSpace),
-                CarouselView() //immagini sono predeterminate
+                CarouselView() // immagini sono predeterminate
               ],
             ),
           ),
-
           SizedBox(height: sizes.stdPaddingSpace),
-
-          //log-in/sign-in box  
+          // log-in/sign-in box
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -91,96 +84,114 @@ class _LogInPageState extends State<LogInPage> {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: sizes.smallPaddingSpace),
-                    TextField( //campo per inserire la mail
+                    TextField(
+                      // campo per inserire la mail
                       controller: _mailController,
-                      decoration:
-                          const InputDecoration(hintText: 'Mail', 
-                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: tedTokColors.tokBlue),),
-                          ),
-                          cursorColor: tedTokColors.tokBlue,
+                      decoration: const InputDecoration(
+                        hintText: 'Mail',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: tedTokColors.tokBlue),
+                        ),
+                      ),
+                      cursorColor: tedTokColors.tokBlue,
                     ),
                     SizedBox(height: sizes.smallPaddingSpace),
-                    TextField( //campo per inserire la password
+                    TextField(
+                      // campo per inserire la password
                       controller: _passwordController,
-                      decoration:
-                          const InputDecoration(hintText: 'Password',
-                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: tedTokColors.tokBlue),)
-                          ),
-                          cursorColor: tedTokColors.tokBlue,
+                      decoration: const InputDecoration(
+                        hintText: 'Password',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: tedTokColors.tokBlue),
+                        ),
+                      ),
+                      cursorColor: tedTokColors.tokBlue,
+                      obscureText: true,
                     ),
                     SizedBox(height: sizes.smallPaddingSpace),
-                    //loginButton
-                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: tedTokColors.tokBlue, // Azzurro TedTok
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(sizes.stdRoundedCorner),
-                      ),
-                      ),
-                      onPressed: () {
-                        //esecuzione funzioni di login
-                        setState(() {
-                          try{
-                            user = userSearcher(_mailController.text, _passwordController.text);
-                            Navigator.push(
-                            context,
-                              MaterialPageRoute(
-                                builder: (context) =>TopicSelectionPage(userData:user),),
-                          );
-                          }
-                          catch(Exception){
-                            Text(
-                            'Invalid credentials. Please try again.',
-                            style: TextStyle(color: tedTokColors.tedRed),
+                    // loginButton
+                    if (isLoading)
+                      CircularProgressIndicator()
+                    else
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: tedTokColors.tokBlue, // Azzurro TedTok
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(sizes.stdRoundedCorner),
+                          ),
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            isLoading = true;
+                            errorMessage = '';
+                          });
+                          try {
+                            final user = await userSearcher(
+                              _mailController.text,
+                              _passwordController.text,
                             );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TopicSelectionPage(userData: user),
+                              ),
+                            );
+                          } catch (e) {
+                            setState(() {
+                              errorMessage = 'Invalid credentials. Please try again.';
+                              isLoading = false;
+                              _mailController.clear();
+                              _passwordController.clear();
+                            });
                           }
-                          
-                        });
-                      },
-                      child: const Center(
-                        child: Text(
-                         "LOG IN",
-                         style: fontStyles.buttonText,
-                       ),
+                        },
+                        child: const Center(
+                          child: Text(
+                            "LOG IN",
+                            style: fontStyles.buttonText,
+                          ),
+                        ),
                       ),
-                    ),
+                    if (errorMessage.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          errorMessage,
+                          style: TextStyle(color: tedTokColors.tedRed),
+                        ),
+                      ),
                     SizedBox(height: sizes.stdPaddingSpace),
                     Text(
-                      'Not registered yed?',
+                      'Not registered yet?',
                       style: fontStyles.flavourText,
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: sizes.smallPaddingSpace),
                     ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: tedTokColors.tedRed, // Azzurro TedTok
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(sizes.stdRoundedCorner),
-                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: tedTokColors.tedRed, // Rosso TedTok
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(sizes.stdRoundedCorner),
+                        ),
                       ),
                       onPressed: () {
-                        //esecuzione funzioni di signin
-
+                        // esecuzione funzioni di signin
                       },
                       child: const Center(
                         child: Text(
-                         "SIGN IN",
-                         style: fontStyles.buttonText,
-                       ),
+                          "SIGN IN",
+                          style: fontStyles.buttonText,
+                        ),
                       ),
                     ),
                   ],
-              ),
+                ),
               ),
             ),
           ),
           SizedBox(height: sizes.stdPaddingSpace),
-          
         ],
       ),
     );
   }
 }
-
-
-
