@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tedxtok/Models/topicItem.dart';
+import 'package:tedxtok/Models/userData.dart';
 import 'package:tedxtok/Styles/TedTokColors.dart';
 import 'package:tedxtok/Styles/fontStyles.dart';
 import 'package:tedxtok/Styles/sizes.dart';
 import 'package:tedxtok/talkDisplayPage.dart';
 
 class TopicSelectionPage extends StatefulWidget {
+  final UserData userData;
+  TopicSelectionPage({required this.userData});
   @override
   _TopicSelectionPageState createState() => _TopicSelectionPageState();
 }
