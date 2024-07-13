@@ -16,7 +16,7 @@ Future<UserData> userSearcher(String mail, String password) async {
   );
   if (response.statusCode == 200) {
     var data = json.decode(response.body);
-    var user = data.map((model) => UserData.fromJSON(model));
+    var user = UserData.fromJSON(data);
     return user;
   } else {
     throw Exception('User not found');

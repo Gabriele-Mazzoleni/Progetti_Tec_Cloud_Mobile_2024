@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:tedxtok/Functions/log_in.dart';
 import 'package:tedxtok/Models/carousel_view.dart';
+import 'package:tedxtok/Models/userData.dart';
 import 'package:tedxtok/Styles/fontStyles.dart';
 import 'package:tedxtok/Styles/sizes.dart';
 import 'package:tedxtok/Styles/tedTokColors.dart';
@@ -30,6 +34,7 @@ class LogInPage extends StatefulWidget {
 class _LogInPageState extends State<LogInPage> {
   final TextEditingController _mailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  late Future<UserData> user;
   @override
   void initState() {
     super.initState();
@@ -114,7 +119,23 @@ class _LogInPageState extends State<LogInPage> {
                       ),
                       onPressed: () {
                         //esecuzione funzioni di login
-
+                        setState(() {
+                          try{
+                            user = userSearcher(_mailController.text, _passwordController.text);
+                            Navigator.push(
+                            context,
+                              MaterialPageRoute(
+                                builder: (context) =>TopicSelectionPage(userData:user),),
+                          );
+                          }
+                          catch(Exception){
+                            Text(
+                            'Invalid credentials. Please try again.',
+                            style: TextStyle(color: tedTokColors.tedRed),
+                            );
+                          }
+                          
+                        });
                       },
                       child: const Center(
                         child: Text(
