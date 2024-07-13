@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tedxtok/Models/carousel_view.dart';
 import 'package:tedxtok/Styles/fontStyles.dart';
 import 'package:tedxtok/Styles/sizes.dart';
 import 'package:tedxtok/Styles/tedTokColors.dart';
@@ -27,86 +28,133 @@ class LogInPage extends StatefulWidget {
 
 //pagina di Login
 class _LogInPageState extends State<LogInPage> {
-
+  final TextEditingController _mailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   @override
   void initState() {
     super.initState();
   }
 
-
-//DA SISTEMARE AD ORA é SEMIVUOTA
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Column(
         children: [
-          // Header
+          // Logo dell'applicazione
           Container(
-            decoration: const BoxDecoration(
-              color: tedTokColors.tedRed, // Rosso TedTok
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(sizes.stdRoundedCorner),
-                bottomRight: Radius.circular(sizes.stdRoundedCorner),
-              ),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'WELCOME',
-                      style: fontStyles.headerText,
-                      textAlign: TextAlign.right,
-                    ),
-                    Text(
-                      'TO',
-                      style: fontStyles.headerText,
-                      textAlign: TextAlign.right,
-                    ),
-                  ],
-                ),
-                Image.asset(
-                  'assets/images/Logo_Bianco.png', // Path to the image asset
-                  height: sizes.imgSize,
-                ),
-              ],
+            padding: EdgeInsets.symmetric(vertical: sizes.smallPaddingSpace),
+            child: Image.asset(
+              alignment: Alignment.center,
+              'assets/images/TedTokLogo.png', // Path to the image asset
+              height: sizes.smallimgSize,
             ),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: sizes.smallPaddingSpace),
           // Instructions
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'Please select a list of topics that might interest you',
-              style: fontStyles.introText,
-              textAlign: TextAlign.center,
+            child: Column(
+              children: [
+                Text(
+                  'Here you can access a wide variety of talks, spanning hundreds of topics!',
+                  style: fontStyles.flavourText,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: sizes.smallPaddingSpace),
+                CarouselView() //immagini sono predeterminate
+              ],
             ),
           ),
-          SizedBox(height: 20),
-          // List of Topics
+
+          SizedBox(height: sizes.stdPaddingSpace),
+
+          //log-in/sign-in box  
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+                  border: Border.all(color: tedTokColors.tokBlue),
                   borderRadius: BorderRadius.circular(sizes.smallRoundedCorner),
                 ),
+                child: Column(
+                  children: [
+                    Text(
+                      'Log in if you already have an account',
+                      style: fontStyles.flavourText,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: sizes.smallPaddingSpace),
+                    TextField( //campo per inserire la mail
+                      controller: _mailController,
+                      decoration:
+                          const InputDecoration(hintText: 'Mail', 
+                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: tedTokColors.tokBlue),),
+                          ),
+                          cursorColor: tedTokColors.tokBlue,
+                    ),
+                    SizedBox(height: sizes.smallPaddingSpace),
+                    TextField( //campo per inserire la password
+                      controller: _passwordController,
+                      decoration:
+                          const InputDecoration(hintText: 'Password',
+                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: tedTokColors.tokBlue),)
+                          ),
+                          cursorColor: tedTokColors.tokBlue,
+                    ),
+                    SizedBox(height: sizes.smallPaddingSpace),
+                    //loginButton
+                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: tedTokColors.tokBlue, // Azzurro TedTok
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(sizes.stdRoundedCorner),
+                      ),
+                      ),
+                      onPressed: () {
+                        //esecuzione funzioni di login
+
+                      },
+                      child: const Center(
+                        child: Text(
+                         "LOG IN",
+                         style: fontStyles.buttonText,
+                       ),
+                      ),
+                    ),
+                    SizedBox(height: sizes.stdPaddingSpace),
+                    Text(
+                      'Not registered yed?',
+                      style: fontStyles.flavourText,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: sizes.smallPaddingSpace),
+                    ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: tedTokColors.tedRed, // Azzurro TedTok
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(sizes.stdRoundedCorner),
+                      ),
+                      ),
+                      onPressed: () {
+                        //esecuzione funzioni di signin
+
+                      },
+                      child: const Center(
+                        child: Text(
+                         "SIGN IN",
+                         style: fontStyles.buttonText,
+                       ),
+                      ),
+                    ),
+                  ],
+              ),
               ),
             ),
           ),
-          SizedBox(height: 20),
-          // Button
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          ),
-          SizedBox(height: 20),
+          SizedBox(height: sizes.stdPaddingSpace),
+          
         ],
       ),
     );
