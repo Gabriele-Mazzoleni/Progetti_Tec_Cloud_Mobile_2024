@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tedxtok/Functions/database.dart';
 import 'package:tedxtok/Models/topicItem.dart';
 import 'package:tedxtok/Models/userData.dart';
 import 'package:tedxtok/Styles/TedTokColors.dart';
@@ -15,36 +16,21 @@ class TopicSelectionPage extends StatefulWidget {
 }
 
 class _TopicSelectionPageState extends State<TopicSelectionPage> {
-  final List<String> topics = [
-    'TED Membership',
-    'evolution',
-    'wildlife',
-    'aliens',
-    'bionics',
-    'painting',
-    'personal growth',
-    'war',
-    'augmented reality',
-    'communication',
-    'crime',
-    'encryption',
-    'medical research',
-    'nuclear energy',
-    'ocean',
-    'religion',
-    'sleep',
-    'visualizations',
-    'beauty',
-    'metaverse',
-  ];
-
+  late List<String> topics=[];
   late List<bool> checkedTopics;
   String searchQuery = '';
 
   @override
   void initState() {
     super.initState();
+    _loadTopics();
+  }
+
+  Future<void> _loadTopics() async {
+    await Database.init();
+    topics = await Database.getTopics();
     checkedTopics = List<bool>.filled(topics.length, false);
+    setState(() {});
   }
 
   @override
