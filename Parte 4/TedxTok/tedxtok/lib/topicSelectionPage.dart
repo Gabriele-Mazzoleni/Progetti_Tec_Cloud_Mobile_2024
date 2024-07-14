@@ -19,8 +19,7 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
   late List<String> topics = [];
   late List<bool> checkedTopics;
   String searchQuery = '';
-  bool isLoading =
-      true; // Aggiungiamo una variabile di stato per il caricamento
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -32,7 +31,7 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
     topics = await Database.getTopics();
     checkedTopics = List<bool>.filled(topics.length, false);
     setState(() {
-      isLoading = false; // Impostiamo isLoading su false dopo il caricamento
+      isLoading = false;
     });
   }
 
@@ -46,67 +45,65 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
     return Scaffold(
       body: SafeArea(
         child: isLoading
-            ? Center(
-                child:
-                    CircularProgressIndicator()) // Mostriamo un indicatore di caricamento
-            : Column(
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: tedTokColors.tedRed,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(sizes.stdRoundedCorner),
-                        bottomRight: Radius.circular(sizes.stdRoundedCorner),
+            ? Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: tedTokColors.tedRed,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(sizes.stdRoundedCorner),
+                          bottomRight: Radius.circular(sizes.stdRoundedCorner),
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                'WELCOME',
+                                style: fontStyles.headerText,
+                                textAlign: TextAlign.right,
+                              ),
+                              Text(
+                                'TO',
+                                style: fontStyles.headerText,
+                                textAlign: TextAlign.right,
+                              ),
+                            ],
+                          ),
+                          Image.asset(
+                            'assets/images/Logo_Bianco.png',
+                            height: sizes.imgSize,
+                          ),
+                        ],
                       ),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    alignment: Alignment.center,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              'WELCOME',
-                              style: fontStyles.headerText,
-                              textAlign: TextAlign.right,
-                            ),
-                            Text(
-                              'TO',
-                              style: fontStyles.headerText,
-                              textAlign: TextAlign.right,
-                            ),
-                          ],
-                        ),
-                        Image.asset(
-                          'assets/images/Logo_Bianco.png',
-                          height: sizes.imgSize,
-                        ),
-                      ],
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        'Hello, ${widget.userData.username}',
+                        style: fontStyles.introText,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      'Hello, ${widget.userData.username}',
-                      style: fontStyles.introText,
-                      textAlign: TextAlign.center,
+                    SizedBox(height: 10),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        'Please select a list of topics that might interest you',
+                        style: fontStyles.introText,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      'Please select a list of topics that might interest you',
-                      style: fontStyles.introText,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Expanded(
-                    child: Padding(
+                    SizedBox(height: 20),
+                    Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Container(
                         padding: EdgeInsets.all(16),
@@ -132,67 +129,70 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
                               },
                             ),
                             SizedBox(height: 20),
-                            Expanded(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: filteredTopics.map((topic) {
-                                    int originalIndex = topics.indexOf(topic);
-                                    return topicItem(
-                                      topic: topic,
-                                      isChecked: checkedTopics[originalIndex],
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          checkedTopics[originalIndex] =
-                                              value ?? false;
-                                        });
-                                      },
-                                    );
-                                  }).toList(),
-                                ),
+                            Container(
+                              height: MediaQuery.of(context).size.height *
+                                  0.4, // Altezza dinamica
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: filteredTopics.length,
+                                itemBuilder: (context, index) {
+                                  String topic = filteredTopics[index];
+                                  int originalIndex = topics.indexOf(topic);
+                                  return topicItem(
+                                    topic: topic,
+                                    isChecked: checkedTopics[originalIndex],
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        checkedTopics[originalIndex] =
+                                            value ?? false;
+                                      });
+                                    },
+                                  );
+                                },
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: tedTokColors.tokBlue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(sizes.stdRoundedCorner),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                      ),
-                      onPressed: () {
-                        List<String> selectedTopics = [];
-                        for (int i = 0; i < topics.length; i++) {
-                          if (checkedTopics[i]) {
-                            selectedTopics.add(topics[i]);
-                          }
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                TalkDisplayPage(selectedTags: selectedTopics),
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: tedTokColors.tokBlue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(sizes.stdRoundedCorner),
                           ),
-                        );
-                      },
-                      child: const Center(
-                        child: Text(
-                          "LET'S BEGIN",
-                          style: fontStyles.buttonText,
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                        ),
+                        onPressed: () {
+                          List<String> selectedTopics = [];
+                          for (int i = 0; i < topics.length; i++) {
+                            if (checkedTopics[i]) {
+                              selectedTopics.add(topics[i]);
+                            }
+                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  TalkDisplayPage(selectedTags: selectedTopics),
+                            ),
+                          );
+                        },
+                        child: const Center(
+                          child: Text(
+                            "LET'S BEGIN",
+                            style: fontStyles.buttonText,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                ],
+                    SizedBox(height: 20),
+                  ],
+                ),
               ),
       ),
     );
