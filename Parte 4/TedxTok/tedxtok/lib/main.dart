@@ -15,9 +15,9 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+     return MaterialApp(
       home: Scaffold(
-        resizeToAvoidBottomInset: false,
+        //resizeToAvoidBottomInset: false,
         body: LogInPage(),
       ),
     );
@@ -68,7 +68,9 @@ class _LogInPageState extends State<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body:SafeArea(
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -198,6 +200,7 @@ class _LogInPageState extends State<LogInPage> {
             SizedBox(height: sizes.stdPaddingSpace),
           ],
         ),
+      ),
       ),
     );
   }

@@ -12,7 +12,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'dart:async';
 
 class TalkDisplayPage extends StatefulWidget {
-  final List<TopicItem> selectedTags;
+  final List<String> selectedTags;
 
   TalkDisplayPage({required this.selectedTags});
 
