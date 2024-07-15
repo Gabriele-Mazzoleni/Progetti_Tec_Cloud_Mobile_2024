@@ -1,14 +1,12 @@
 Migliorie progetto cloud
 -PySpark:
-Job per login OK
-altro?
+Job di creazione dataset per login
+Job che permette di vedere speaker più comune per ogni topic
 
 -Lambda:
-Qualcosa che sfrutti il database TedTok_tags?
-LF per login OK
+LF per Login (con dati preesistenti)
 
 -Flutter:
-Ritaglio dei video OK
+Aggiunta ritaglio video
 Aggiunta login profilo
-Aggiunta preferiti, visualizzabili nel proprio profilo
 Filtro di ricerca per i tag
