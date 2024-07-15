@@ -5,6 +5,7 @@ Job che permette di vedere speaker più comune per ogni topic
 
 -Lambda:
 LF per Login (con dati preesistenti)
+LF per Signin (aggiunta di nuovi dati)
 
 -Flutter:
 Aggiunta ritaglio video
