@@ -32,8 +32,15 @@ class LogInPage extends StatefulWidget {
 class _LogInPageState extends State<LogInPage> {
   final TextEditingController _mailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  final TextEditingController _signInMailController = TextEditingController();
+  final TextEditingController _signInUsernameController = TextEditingController();
+  final TextEditingController _signInPasswordController = TextEditingController();
+
   String errorMessage = '';
+  String signInErrorMessage = '';
   bool isLoading = false;
+  bool isSignInLoading = false;
 
   void _navigateToTopicSelectionPage(UserData user) {
     Navigator.push(
@@ -62,6 +69,119 @@ class _LogInPageState extends State<LogInPage> {
         isLoading = false;
         _mailController.clear();
         _passwordController.clear();
+      });
+    }
+  }
+
+  void _showSignInModal(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Sign In'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: _signInMailController,
+                      decoration: InputDecoration(
+                        hintText: 'Mail',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: tedTokColors.tedRed),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: sizes.smallPaddingSpace),
+                    TextField(
+                      controller: _signInPasswordController,
+                      decoration: InputDecoration(
+                        hintText: 'Password',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: tedTokColors.tedRed),
+                        ),
+                      ),
+                      obscureText: true,
+                    ),
+                    SizedBox(height: sizes.smallPaddingSpace),
+                    TextField(
+                      controller: _signInUsernameController,
+                      decoration: InputDecoration(
+                        hintText: 'Username',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: tedTokColors.tedRed),
+                        ),
+                      ),
+                    ),
+                    if (signInErrorMessage.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          signInErrorMessage,
+                          style: TextStyle(color: tedTokColors.tedRed),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  style: ElevatedButton.styleFrom(
+                        backgroundColor: tedTokColors.tedRed, // Rosso TedTok
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(sizes.stdRoundedCorner),
+                        ),
+                      ),
+                  onPressed: () {
+                    signInErrorMessage='';
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel', style: TextStyle(color: Colors.white)),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                        backgroundColor: tedTokColors.tedRed, // Rosso TedTok
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(sizes.stdRoundedCorner),
+                        ),
+                      ),
+                  onPressed: isSignInLoading ? null : () {
+                    setState(() {
+                      isSignInLoading = true;
+                      signInErrorMessage = '';
+                    });
+                    _signin(setState);
+                  },
+                  child: isSignInLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text('Confirm', style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _signin(StateSetter setState) async {
+    try {
+      final user = await userAdder(
+        _signInMailController.text,
+        _signInUsernameController.text,
+        _signInPasswordController.text,
+      );
+      Navigator.of(context).pop();
+      _navigateToTopicSelectionPage(user);
+    } catch (e) {
+      setState(() {
+        signInErrorMessage = 'Error during sign-in. Please try again.';
+        isSignInLoading = false;
+        _signInMailController.clear();
+        _signInUsernameController.clear();
+        _signInPasswordController.clear();
       });
     }
   }
@@ -184,7 +304,7 @@ class _LogInPageState extends State<LogInPage> {
                         ),
                       ),
                       onPressed: () {
-                        // esecuzione funzioni di signin
+                        _showSignInModal(context);
                       },
                       child: const Center(
                         child: Text(

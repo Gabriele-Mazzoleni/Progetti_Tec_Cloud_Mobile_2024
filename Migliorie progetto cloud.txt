@@ -10,4 +10,6 @@ LF per Signin (aggiunta di nuovi dati)
 -Flutter:
 Aggiunta ritaglio video
 Aggiunta login profilo
+Aggiunta signin profilo
 Filtro di ricerca per i tag
+

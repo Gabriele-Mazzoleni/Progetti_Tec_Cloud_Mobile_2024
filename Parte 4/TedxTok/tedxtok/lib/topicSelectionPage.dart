@@ -45,7 +45,7 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
     return Scaffold(
       body: SafeArea(
         child: isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? Center(child: CircularProgressIndicator(color: tedTokColors.tokBlue,))
             : SingleChildScrollView(
                 child: Column(
                   children: [
