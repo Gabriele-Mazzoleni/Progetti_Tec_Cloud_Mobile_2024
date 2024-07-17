@@ -97,22 +97,28 @@ class _TalkDisplayPageState extends State<TalkDisplayPage> {
                 title: Text('Mail: ${widget.userData.mail}', style: fontStyles.TalkSubitle),
               ),
               SizedBox(height: sizes.stdPaddingSpace),
-            ElevatedButton(
-               style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(sizes.stdRoundedCorner),
+            SizedBox(
+              width: 120.0,
+              child: ElevatedButton(
+                 style: ElevatedButton.styleFrom(
+                            backgroundColor: tedTokColors.tokBlue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(sizes.stdRoundedCorner),
+                              side: BorderSide(
+                                color: Colors.white, // Specifica il colore del bordo desiderato
+                                width: 3, // Specifica la larghezza del bordo
+                              ),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 15),
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 15),
-                        ),
-              onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => LogInPage()),
-                  (Route<dynamic> route) => false,
-                );
-              },
-              child: Text('Log Out',style: fontStyles.logoutButtonText ),
+                onPressed: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => LogInPage()),
+                    (Route<dynamic> route) => false,
+                  );
+                },
+                child: Text('LOG OUT',style: fontStyles.logoutButtonText ),
+              ),
             ),
           ],
         ),
