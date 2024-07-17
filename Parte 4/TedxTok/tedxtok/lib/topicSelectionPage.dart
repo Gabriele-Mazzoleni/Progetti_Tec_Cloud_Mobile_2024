@@ -178,7 +178,7 @@ class _TopicSelectionPageState extends State<TopicSelectionPage> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  TalkDisplayPage(selectedTags: selectedTopics),
+                                  TalkDisplayPage(selectedTags: selectedTopics, userData:widget.userData),
                             ),
                           );
                         },
